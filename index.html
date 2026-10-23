@@ -1,0 +1,2918 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wasatch Ski Weather</title>
+
+    <link rel="icon" type="image/jpeg" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --grey-1: #1e293b;
+        --grey-2: #283547;
+        --grey-3: #334155;
+        --grey-4: #475569;
+        --grey-5: #64748b;
+
+        --brown-1: #d7ccc8;
+        --brown-2: #bcaaa4;
+        --brown-3: #8d6e63;
+        --brown-4: #6d4c41;
+        --brown-5: #4e342e;
+
+        --accent-blue: #0284c7;
+        --accent-ice: #e0f2fe;
+        --color-avy: #d32f2f;
+        --card-bg: rgba(255, 255, 255, 0.94);
+
+        --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #334155 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 18px;
+        color: #1e293b;
+        min-height: 100vh;
+        background: var(--bg-gradient);
+        background-attachment: fixed;
+      }
+
+      .site-header {
+        max-width: 1240px;
+        margin: 0 auto 18px auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .brand-group {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .header-logo {
+        height: 52px;
+        width: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+      }
+
+      .brand-text h1 {
+        margin: 0;
+        color: #ffffff;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        font-size: 1.75rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+      }
+
+      .brand-sub {
+        color: #cbd5e1;
+        font-size: 0.78rem;
+        font-weight: 500;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px #22c55e;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn {
+        background: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(8px);
+        font-family: inherit;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.26);
+        transform: translateY(-1px);
+      }
+
+      /* Filter & Sort Control Bar */
+      .control-bar {
+        max-width: 1240px;
+        margin: 0 auto 22px auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 14px 18px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .control-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #64748b;
+        margin-right: 4px;
+      }
+
+      .pill-btn {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .pill-btn:hover {
+        background: #e2e8f0;
+        border-color: #94a3b8;
+      }
+
+      .pill-btn.active {
+        background: #1e293b;
+        color: #ffffff;
+        border-color: #1e293b;
+        box-shadow: 0 2px 6px rgba(30, 41, 59, 0.25);
+      }
+
+      .resort-pill {
+        font-size: 0.73rem;
+        padding: 5px 10px;
+      }
+
+      .resort-pill.active {
+        background: #0284c7;
+        border-color: #0284c7;
+        color: #ffffff;
+      }
+
+      .sort-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+      }
+
+      .sort-select {
+        background: #f8fafc;
+        color: #1e293b;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      /* Main Grid Container */
+      .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 20px;
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        backdrop-filter: blur(12px);
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.26);
+      }
+
+      .card-header {
+        padding: 13px 18px;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+        gap: 10px;
+        background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.06));
+        background-blend-mode: overlay;
+      }
+
+      .header-1 { background-color: var(--grey-1); }
+      .header-2 { background-color: var(--grey-2); }
+      .header-3 { background-color: var(--grey-3); }
+      .header-4 { background-color: var(--grey-4); }
+      .header-5 { background-color: var(--grey-5); }
+      .header-6 { background-color: var(--brown-1); color: #4e342e !important; }
+      .header-7 { background-color: var(--brown-2); color: #3e2723 !important; }
+      .header-8 { background-color: var(--brown-3); }
+      .header-9 { background-color: var(--brown-4); }
+      .header-10 { background-color: var(--brown-5); }
+
+      .h-title {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .h-badge {
+        font-size: 0.64rem;
+        padding: 2px 7px;
+        border-radius: 99px;
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .h-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .h-time {
+        font-weight: 500;
+        opacity: 0.9;
+        text-align: right;
+        white-space: nowrap;
+        font-size: 0.72rem;
+      }
+
+      .chevron {
+        transition: transform 0.25s ease;
+        font-size: 1.1rem;
+        display: inline-block;
+        line-height: 1;
+      }
+
+      .card.collapsed .chevron {
+        transform: rotate(-90deg);
+      }
+
+      .card-body {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card.collapsed .card-body {
+        display: none;
+      }
+
+      /* Sub-navigation tabs inside cards */
+      .sub-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 5px;
+        margin-bottom: 12px;
+        background: #f1f5f9;
+        padding: 5px;
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+
+      .sub-tabs::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      .sub-tabs::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 99px;
+      }
+
+      .sub-tab {
+        flex: 0 0 auto;
+        text-align: center;
+        padding: 6px 11px;
+        font-size: 0.73rem;
+        font-weight: 600;
+        color: #475569;
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+
+      .sub-tab:hover {
+        color: #0f172a;
+        background: rgba(255, 255, 255, 0.55);
+      }
+
+      .sub-tab.active {
+        background: #ffffff;
+        color: #0284c7;
+        font-weight: 700;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
+      }
+
+      .pipe-sep {
+        color: #94a3b8;
+        font-weight: 400;
+        margin: 0 6px;
+        user-select: none;
+      }
+
+      .metric-legend {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 0.7rem;
+        color: #64748b;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px 11px;
+        margin-bottom: 10px;
+      }
+
+      /* Scrollable Table Container */
+      .table-scroll-wrap {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 420px;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #ffffff;
+        margin-bottom: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+      }
+
+      .table-scroll-wrap::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+
+      .table-scroll-wrap::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 8px;
+      }
+
+      .table-scroll-wrap::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 8px;
+      }
+
+      .table-scroll-wrap::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+
+      /* Tables */
+      .section-block {
+        margin-bottom: 16px;
+      }
+
+      .section-block:last-of-type {
+        margin-bottom: 8px;
+      }
+
+      .card-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #475569;
+      }
+
+      .mini-table {
+        width: 100%;
+        min-width: max-content;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.83rem;
+        table-layout: auto;
+      }
+
+      .mini-table th {
+        font-weight: 700;
+        font-size: 0.68rem;
+        padding: 9px 14px;
+        border-bottom: 1px solid #cbd5e1;
+        text-transform: uppercase;
+        color: #64748b;
+        background: #f8fafc;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+      .mini-table td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        vertical-align: middle;
+        white-space: nowrap;
+        background: #ffffff;
+      }
+
+      .mini-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .mini-table tr:hover td {
+        background: #f8fafc;
+      }
+
+      .mini-table th:first-child,
+      .mini-table td:first-child {
+        text-align: left;
+        padding-left: 12px;
+        padding-right: 14px;
+        position: sticky;
+        left: 0;
+        z-index: 3;
+        border-right: 1px solid #f1f5f9;
+      }
+
+      .mini-table th:first-child {
+        z-index: 4;
+        background: #f8fafc;
+      }
+
+      .mini-table th:not(:first-child),
+      .mini-table td:not(:first-child) {
+        text-align: center;
+      }
+
+      .col-loc {
+        font-weight: 600;
+        color: #1e293b;
+        white-space: nowrap;
+      }
+
+      .region-tag {
+        font-size: 0.58rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 1px 4px;
+        border-radius: 4px;
+        margin-left: 4px;
+        background: #e2e8f0;
+        color: #475569;
+        vertical-align: middle;
+        display: inline-block;
+      }
+
+      .col-data {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .resort-sup {
+        color: #0284c7;
+        font-weight: 700;
+      }
+
+      .snow-pill {
+        display: inline-block;
+        padding: 2px 7px;
+        border-radius: 99px;
+        font-weight: 700;
+        font-size: 0.76rem;
+      }
+
+      .snow-zero {
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .snow-light {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+
+      .snow-powder {
+        background: #0284c7;
+        color: #ffffff;
+      }
+
+      /* Salt Lake Valley Layout */
+      .slc-flex-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+      }
+
+      .slc-current {
+        flex: 1;
+        min-width: 190px;
+        text-align: center;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: white;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.25);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slc-current::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        z-index: 1;
+      }
+
+      .slc-temp {
+        font-size: 3.3rem;
+        font-weight: 300;
+        color: white;
+        line-height: 1;
+        position: relative;
+        z-index: 2;
+      }
+
+      .slc-sub {
+        font-size: 0.98rem;
+        color: #e2e8f0;
+        margin-top: 8px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .alert-banner {
+        display: block;
+        background-color: var(--color-avy);
+        color: white;
+        text-align: center;
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 14px;
+        border-radius: 8px;
+        text-decoration: none;
+      }
+
+      .slc-forecast {
+        flex: 2.5;
+        min-width: 240px;
+      }
+
+      .slc-table {
+        width: 100%;
+        font-size: 0.86rem;
+        border-collapse: collapse;
+      }
+
+      .slc-table td {
+        padding: 10px 6px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .slc-day {
+        font-weight: 600;
+        color: #334155;
+        width: 26%;
+      }
+
+      .slc-hl {
+        color: #0f172a;
+        font-weight: 600;
+        width: 26%;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .slc-cond {
+        font-size: 0.82rem;
+        color: #475569;
+      }
+
+      /* Avalanche & Text Cards */
+      .danger-badge-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+      }
+
+      .danger-rating {
+        font-size: 1.35rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .summary-text {
+        line-height: 1.6;
+        color: #334155;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        margin: 0 0 14px 0;
+      }
+
+      .rose-img {
+        width: 100%;
+        max-width: 200px;
+        display: block;
+        margin: 10px auto;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      /* XC Styles */
+      .xc-item {
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .xc-item:last-child {
+        border-bottom: none;
+      }
+
+      .xc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 11px 0;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .xc-loc-name {
+        font-weight: 600;
+        color: #3e2723;
+        font-size: 0.92rem;
+        text-decoration: none;
+      }
+
+      .xc-loc-name:hover {
+        text-decoration: underline;
+      }
+
+      .xc-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #64748b;
+      }
+
+      .xc-date-stamp {
+        font-size: 0.73rem;
+        font-style: italic;
+      }
+
+      .xc-chevron {
+        display: inline-block;
+        transition: transform 0.25s ease;
+        font-size: 1rem;
+      }
+
+      .xc-header.expanded .xc-chevron {
+        transform: rotate(-180deg);
+      }
+
+      .xc-summary {
+        display: none;
+        padding: 0 0 12px 0;
+        font-size: 0.85rem;
+        color: #475569;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .xc-summary.open {
+        display: block;
+      }
+
+      /* Webcams */
+      .resort-section {
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .resort-section:last-child {
+        border-bottom: none;
+      }
+
+      .resort-header {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #475569;
+        padding: 12px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+      }
+
+      .snow-stake-header {
+        color: var(--color-avy);
+      }
+
+      .resort-chevron {
+        transition: transform 0.25s ease;
+        font-size: 1rem;
+      }
+
+      .resort-section.collapsed .resort-chevron {
+        transform: rotate(-90deg);
+      }
+
+      .cam-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+        gap: 14px;
+        padding-bottom: 14px;
+      }
+
+      .resort-section.collapsed .cam-grid {
+        display: none;
+      }
+
+      .cam-item {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .cam-item:hover {
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      }
+
+      .cam-title {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .cam-img {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        display: block;
+        background: #e2e8f0;
+        min-height: 110px;
+        object-fit: cover;
+      }
+
+      .cam-preview {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: #f8fafc;
+        border-radius: 6px;
+        padding: 14px 10px;
+        font-size: 0.73rem;
+        margin-bottom: 8px;
+      }
+
+      /* Roads Card */
+      .road-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .road-table th {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 10px 16px;
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        text-align: left;
+        border-bottom: 1px solid #cbd5e1;
+      }
+
+      .road-table td {
+        padding: 13px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+      }
+
+      .r-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1e293b;
+        display: block;
+      }
+
+      .r-sub {
+        font-size: 0.73rem;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .c-weather {
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: #334155;
+        display: block;
+      }
+
+      .c-surface {
+        font-size: 0.73rem;
+        color: #64748b;
+        display: block;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .s-open { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+      .s-closed { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+      .s-traction { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+      .s-neutral { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+      .signs-section {
+        background: #f8fafc;
+        padding: 16px;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .signs-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #475569;
+        margin-bottom: 12px;
+      }
+
+      .sign-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+
+      .sign-box {
+        background: #1e293b;
+        border-radius: 6px;
+        padding: 12px 10px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 76px;
+        border: 2px solid #334155;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .sign-text {
+        font-family: 'VT323', monospace;
+        color: #facc15;
+        font-size: 1.1rem;
+        line-height: 1.2;
+        text-transform: uppercase;
+        text-shadow: 0 0 4px rgba(250, 204, 21, 0.4);
+        white-space: pre-wrap;
+      }
+
+      .sign-label {
+        font-size: 0.65rem;
+        color: #475569;
+        font-weight: 600;
+        margin-top: 5px;
+        text-align: center;
+        display: block;
+        text-transform: uppercase;
+      }
+
+      .updates-section {
+        background: #eff6ff;
+        padding: 16px;
+        border-top: 1px solid #bfdbfe;
+      }
+
+      .update-header {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #1d4ed8;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .update-text {
+        font-size: 0.82rem;
+        color: #1e3a8a;
+        line-height: 1.5;
+      }
+
+      /* Parking Info */
+      .parking-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      .parking-item {
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        border-left: 3px solid #bcaaa4;
+        padding-left: 10px;
+      }
+
+      .parking-item strong {
+        color: #3e2723;
+        display: block;
+        margin-bottom: 2px;
+        font-weight: 600;
+      }
+
+      .parking-item a {
+        color: #0284c7;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .parking-item a:hover {
+        text-decoration: underline;
+      }
+
+      .parking-note {
+        font-size: 0.78rem;
+        color: #5d4037;
+        display: block;
+        line-height: 1.4;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: auto;
+        padding: 8px 14px;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.76rem;
+        color: #334155;
+        font-weight: 600;
+        align-self: flex-start;
+        text-decoration: none;
+        transition: all 0.15s;
+      }
+
+      .btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+
+      .note-box {
+        font-size: 0.72rem;
+        color: #64748b;
+        margin: 10px 0 14px 0;
+        line-height: 1.4;
+        background: #f8fafc;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border-left: 3px solid #0284c7;
+      }
+
+      .plume-graph {
+        width: 100%;
+        display: block;
+        border-radius: 8px;
+        min-height: 150px;
+        background: #f8f9fa;
+        border: 1px solid #e2e8f0;
+      }
+
+      @media (max-width: 768px) {
+        body { padding: 8px; }
+        .site-header { margin-bottom: 12px; }
+        .brand-text h1 { font-size: 1.35rem; }
+        .header-logo { height: 40px; width: 40px; }
+        .control-bar { padding: 12px; }
+        .container { grid-template-columns: 1fr; gap: 12px; }
+        .card-header { padding: 11px 14px; }
+        .card-body { padding: 14px; }
+        #card-roads .card-body { padding: 0 !important; }
+        .slc-flex-row { flex-direction: column; }
+        .mini-table { font-size: 0.81rem; }
+        .mini-table th { font-size: 0.66rem; padding: 8px 12px; }
+        .mini-table td { padding: 9px 12px; }
+        .pipe-sep { margin: 0 5px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-group">
+        <img src="logo.png" alt="Wasatch Ski Weather Logo" class="header-logo">
+        <div class="brand-text">
+          <h1>Wasatch Ski Weather</h1>
+          <div class="brand-sub">
+            <span class="live-dot"></span>
+            <span id="sync-status">Syncing Live Feeds...</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="action-btn" id="btn-expand-all">Expand All</button>
+        <button type="button" class="action-btn" id="btn-collapse-all">Collapse All</button>
+        <button type="button" class="action-btn" id="btn-refresh">↻ Refresh Live Data</button>
+      </div>
+    </header>
+
+    <!-- FILTER & SORT BAR -->
+    <section class="control-bar" aria-label="Resort Filter and Sort Controls">
+      <div class="control-row">
+        <div class="filter-group" id="region-filters">
+          <span class="control-label">Region:</span>
+          <button type="button" class="pill-btn active" data-region="all">All Wasatch (9)</button>
+          <button type="button" class="pill-btn" data-region="lcc">Little Cottonwood</button>
+          <button type="button" class="pill-btn" data-region="bcc">Big Cottonwood</button>
+          <button type="button" class="pill-btn" data-region="pc">Park City</button>
+          <button type="button" class="pill-btn" data-region="ogden">Ogden Valley</button>
+        </div>
+
+        <div class="sort-group">
+          <label for="sort-select" class="control-label">Sort By:</label>
+          <select id="sort-select" class="sort-select">
+            <option value="default">Default (Canyon Order)</option>
+            <option value="snow24">Most 24h Snowfall</option>
+            <option value="snow48">Most 48h Forecast Snow</option>
+            <option value="snow72">Most 72h Forecast Snow</option>
+            <option value="base">Deepest Base Depth</option>
+            <option value="temp">Coldest Summit Temp</option>
+            <option value="wind">Calmest Summit Wind</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="filter-group" id="resort-filters">
+          <span class="control-label">Resorts:</span>
+        </div>
+      </div>
+    </section>
+
+    <main id="dashboard" class="container">
+      <!-- 1. SALT LAKE VALLEY (Direct NWS API in Browser) -->
+      <div id="card-slc" class="card" style="grid-column: 1 / -1;">
+        <div class="card-header header-1" data-toggle-card="card-slc">
+          <span class="h-title">Salt Lake Valley <span class="h-badge">Direct NWS API</span></span>
+          <div class="h-right"><span class="h-time" id="slc-header-date">Live NWS</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div id="slc-content">Loading live NWS Salt Lake Valley weather...</div>
+          <a href="https://forecast.weather.gov/MapClick.php?textField1=40.74&textField2=-111.86" target="_blank" rel="noopener" class="btn" style="margin-top:14px;">Full NWS Report →</a>
+        </div>
+      </div>
+
+      <!-- 2. MOUNTAIN CONDITIONS -->
+      <div id="card-telemetry" class="card">
+        <div class="card-header header-2" data-toggle-card="card-telemetry">
+          <span class="h-title">Mountain Conditions <span class="h-badge" id="telemetry-count-badge">9 Shown</span></span>
+          <div class="h-right"><span class="h-time" id="telemetry-header-date">11:38 am</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div class="sub-tabs" id="telemetry-view-tabs">
+            <button type="button" class="sub-tab active" data-tview="overview">Summary</button>
+            <button type="button" class="sub-tab" data-tview="temp">Temp &amp; Sky</button>
+            <button type="button" class="sub-tab" data-tview="wind">Wind</button>
+            <button type="button" class="sub-tab" data-tview="snow">Snow &amp; Base</button>
+            <button type="button" class="sub-tab" data-tview="stacked">All Stacked</button>
+          </div>
+          <div id="telemetry-container"></div>
+          <div class="note-box">
+            <strong>NOTE:</strong> Format is <strong>Base <span class="pipe-sep">|</span> Summit</strong>. Numbers in <span class="resort-sup">bright blue</span> populate from resort reports when weather station telemetry is missing.
+          </div>
+          <a id="telemetry-link" href="https://utahavalanchecenter.org/forecasts/weather-stations#/station-table" target="_blank" rel="noopener" class="btn">Weather Stations →</a>
+        </div>
+      </div>
+
+      <!-- 3. MOUNTAIN FORECAST -->
+      <div id="card-forecast" class="card">
+        <div class="card-header header-3" data-toggle-card="card-forecast">
+          <span class="h-title">Mountain Forecast <span class="h-badge">NWS AVG</span></span>
+          <div class="h-right"><span class="h-time" id="plumes-header-date">12:05 pm</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div class="sub-tabs" id="forecast-view-tabs">
+            <button type="button" class="sub-tab active" data-fview="overview">24h Overview</button>
+            <button type="button" class="sub-tab" data-fview="temp">Temp (H | L)</button>
+            <button type="button" class="sub-tab" data-fview="wind">Wind</button>
+            <button type="button" class="sub-tab" data-fview="cloud">Cloud Cover</button>
+            <button type="button" class="sub-tab" data-fview="snow">24/48/72h Snow</button>
+          </div>
+          <div id="plumes-body"></div>
+          <a href="https://www.weather.gov/slc/AvalancheWeather" target="_blank" rel="noopener" class="btn">NWS Data →</a>
+        </div>
+      </div>
+
+      <!-- 4. AVALANCHE REPORT -->
+      <div id="card-avy" class="card">
+        <div class="card-header header-4" data-toggle-card="card-avy">
+          <span class="h-title">Avalanche Report</span>
+          <div class="h-right"><span class="h-time" id="avy-header-date">...</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div class="danger-badge-row">
+            <div>
+              <div style="font-size:0.7rem; font-weight:700; color:#64748b; text-transform:uppercase;">Danger Rating</div>
+              <div id="avy-danger" class="danger-rating">None</div>
+            </div>
+            <div style="text-align:right; font-size:0.75rem; color:#475569;">
+              <div>Salt Lake Region</div>
+              <div id="avy-forecaster" style="font-weight:600;">Utah Avalanche Center</div>
+            </div>
+          </div>
+          <div id="avy-rose-wrap"><img id="avy-rose" class="rose-img" src="" alt="UAC Danger Rose" style="display:none"></div>
+          <p id="avy-text" class="summary-text"></p>
+          <a href="https://utahavalanchecenter.org" target="_blank" rel="noopener" class="btn">Full Report →</a>
+        </div>
+      </div>
+
+      <!-- 5. UAC WEATHER SUMMARY -->
+      <div id="card-uac-wx" class="card">
+        <div class="card-header header-5" data-toggle-card="card-uac-wx">
+          <span class="h-title">UAC Weather Summary</span>
+          <div class="h-right"><span class="h-time" id="weather-header-date">...</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <p id="current-text" class="summary-text"></p>
+          <a href="https://utahavalanchecenter.org/forecast/salt-lake" target="_blank" rel="noopener" class="btn">UAC Mountain Weather →</a>
+        </div>
+      </div>
+
+      <!-- 6. WEATHER WEENIES -->
+      <div id="card-weenies" class="card">
+        <div class="card-header header-6" data-toggle-card="card-weenies">
+          <span class="h-title">Weather Weenies</span>
+          <div class="h-right"><span class="h-time" id="blog-header-date">...</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <h3 id="forecast-title" style="margin:0 0 10px 0; font-size:1.05rem; color:#1e293b;"></h3>
+          <p id="forecast-summary" class="summary-text"></p>
+          <a href="https://wasatchweatherweenies.blogspot.com/" id="forecast-link" target="_blank" rel="noopener" class="btn">Read Full Post →</a>
+        </div>
+      </div>
+
+      <!-- 7. XC GROOMING -->
+      <div id="card-xc" class="card">
+        <div class="card-header header-7" data-toggle-card="card-xc">
+          <span class="h-title">XC Grooming</span>
+          <div class="h-right"><span class="h-time">Latest</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div id="xc-list"></div>
+          <a href="https://utahnordic.org/grooming/" target="_blank" rel="noopener" class="btn" style="margin-top:12px;">Utah Nordic Association →</a>
+        </div>
+      </div>
+
+      <!-- 8. U OF U PLUMES -->
+      <div id="card-plumes" class="card" style="grid-column: 1 / -1;">
+        <div class="card-header header-8" data-toggle-card="card-plumes">
+          <span class="h-title">U of U Plumes <span class="h-badge">GEFS Model (CLN)</span></span>
+          <div class="h-right"><span class="h-time" id="uofu-run-label">GEFS Model</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div id="uofu-container"><div id="uofu-loading" style="color:#64748b; font-size:0.9rem; margin-bottom:8px;">Fetching live chart from U of U...</div>
+          <img id="uofu-img" class="plume-graph" src="" alt="U of U GEFS Plumes Graph" style="display:none"></div>
+          <a href="https://weather.utah.edu/index.php?t=ensgefsds&r=CLN&d=PL" target="_blank" rel="noopener" class="btn" style="margin-top:14px;">View on U of U →</a>
+        </div>
+      </div>
+
+      <!-- 9. RESORT WEBCAMS -->
+      <div id="card-webcams" class="card" style="grid-column: 1 / -1;">
+        <div class="card-header header-9" data-toggle-card="card-webcams">
+          <span class="h-title">Resort Webcams <span class="h-badge" id="cam-filter-badge">Live</span></span>
+          <div class="h-right"><span class="h-time">Live</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div id="cam-container"><div style="color:#64748b;">Loading Ski Utah Webcams...</div></div>
+          <a href="https://www.skiutah.com/resorts/webcams" target="_blank" rel="noopener" class="btn" style="margin-top:16px;">All Ski Utah Cams →</a>
+        </div>
+      </div>
+
+      <!-- 10. ROAD CONDITIONS & TRAVEL -->
+      <div id="card-roads" class="card" style="grid-column: 1 / -1;">
+        <div class="card-header header-10" data-toggle-card="card-roads">
+          <span class="h-title">Road Conditions &amp; Travel</span>
+          <div class="h-right"><span class="h-time">Live</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="road-table">
+            <thead>
+              <tr>
+                <th style="width:40%">Road</th>
+                <th style="width:35%">Conditions</th>
+                <th style="width:25%; text-align:right;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="road-table-body"></tbody>
+          </table>
+
+          <div class="signs-section">
+            <div class="signs-title">UDOT Road Signs</div>
+            <div class="sign-grid" id="sign-grid"></div>
+          </div>
+
+          <div class="updates-section">
+            <div class="update-header">
+              <span>Latest Updates</span>
+              <a href="https://www.instagram.com/udotcottonwoods/" target="_blank" rel="noopener" style="color:#1d4ed8; text-decoration:underline;">View Instagram ↗</a>
+            </div>
+            <div id="updates-content" class="update-text">Loading updates...</div>
+          </div>
+
+          <div style="background:#f8fafc; padding:14px; text-align:center; border-top:1px solid #e2e8f0; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+            <a href="https://cottonwoodcanyons.udot.utah.gov/road-information/" target="_blank" rel="noopener" style="font-size:0.76rem; color:#0284c7; font-weight:600; text-decoration:none;">Official UDOT Info</a>
+            <a href="https://udottraffic.utah.gov/" target="_blank" rel="noopener" style="font-size:0.76rem; color:#0284c7; font-weight:600; text-decoration:none;">Traffic Map</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. RESORT PARKING INFO -->
+      <div id="card-parking" class="card" style="grid-column: 1 / -1;">
+        <div class="card-header header-10" data-toggle-card="card-parking">
+          <span class="h-title">Resort Parking Info</span>
+          <div class="h-right"><span class="h-time">25/26 Season</span><span class="chevron">⌄</span></div>
+        </div>
+        <div class="card-body">
+          <div id="parking-container" class="parking-grid"></div>
+        </div>
+      </div>
+    </main>
+
+    <footer style="max-width:1240px; margin:28px auto 10px auto; text-align:center; color:#cbd5e1; font-size:0.8rem;">
+      for the love of all things winter &bull;
+      <a href="mailto:jgauthier2@gmail.com" style="color:#ffffff; text-decoration:underline;">feedback</a> &bull;
+      <a href="https://www.instagram.com/theutahskier/" target="_blank" rel="noopener" style="color:#ffffff; text-decoration:underline;">instagram</a>
+    </footer>
+
+    <script>
+      // =========================================================================
+      // 1. LIVE ENDPOINTS (Works locally right out of the box via your live CORS
+      //    endpoints + direct NWS API, AND automatically uses Netlify Functions
+      //    once deployed to Netlify)
+      // =========================================================================
+      const GAS_MAIN_URL = "https://script.google.com/macros/s/AKfycbx7TkIXT3-0NgESX7C3tnmi6j4WgcT4aAFc1DTW2IO20v5dF6sKlteCSkedLzIYwoUA/exec";
+      const GAS_ROADS_URL = "https://script.google.com/macros/s/AKfycbx6vY0cSSg5neGcbRC6sWkqv_0TrXIPbMNP5Zc0TTii-PcRdbRHGVcRYhPs-MCtS-0C9g/exec";
+      const UDOT_RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://cottonwoodcanyons.udot.utah.gov/category/instagram-stories/feed/");
+
+      const RESORTS = [
+        {
+          id: "alta",
+          name: "Alta",
+          sheetNames: ["alta"],
+          region: "lcc",
+          regionLabel: "LCC",
+          lat: 40.5883,
+          lon: -111.6358,
+          webcamUrl: "https://www.skiutah.com/resorts/alta/webcams",
+          parkingTitle: "Alta",
+          parkingUrl: "https://reserve.altaparking.com",
+          parkingLinkText: "Parking & Road Info",
+          parkingNote: "Res required Fri–Sun & Holidays (8am–1pm). Also required early morning weekdays (altaearlyparking.com)."
+        },
+        {
+          id: "snowbird",
+          name: "Snowbird",
+          sheetNames: ["snowbird"],
+          region: "lcc",
+          regionLabel: "LCC",
+          lat: 40.5819,
+          lon: -111.6552,
+          webcamUrl: "https://www.snowbird.com/the-mountain/webcams/",
+          parkingTitle: "Snowbird",
+          parkingUrl: "https://www.snowbird.com/parking",
+          parkingLinkText: "Parking Info",
+          parkingNote: "Free parking is limited & first-come; paid reservations & carpool lots available."
+        },
+        {
+          id: "brighton",
+          name: "Brighton",
+          sheetNames: ["brighton"],
+          region: "bcc",
+          regionLabel: "BCC",
+          lat: 40.6003,
+          lon: -111.5833,
+          webcamUrl: "https://www.skiutah.com/resorts/brighton/webcams",
+          parkingTitle: "Brighton",
+          parkingUrl: "https://reservenski.parkbrightonresort.com",
+          parkingLinkText: "Reservations & Info",
+          parkingNote: "Res required Fri–Sun & Holidays."
+        },
+        {
+          id: "solitude",
+          name: "Solitude",
+          sheetNames: ["solitude"],
+          region: "bcc",
+          regionLabel: "BCC",
+          lat: 40.6197,
+          lon: -111.5911,
+          webcamUrl: "https://www.skiutah.com/resorts/solitude/webcams",
+          parkingTitle: "Solitude",
+          parkingUrl: "https://reservenski.parksolitude.com",
+          parkingLinkText: "Reservations & Info",
+          parkingNote: "Res required Fri–Sun & Holidays (starting Dec 5). Roadside status at ParkBCC.com."
+        },
+        {
+          id: "spruces",
+          name: "Spruces",
+          sheetNames: ["spruces"],
+          region: "bcc",
+          regionLabel: "BCC",
+          lat: 40.6380,
+          lon: -111.6440,
+          webcamUrl: "https://www.skiutah.com/resorts/webcams",
+          parkingTitle: "Backcountry Entry Pass",
+          parkingUrl: "https://www.recreation.gov/sitepass/74405/ea833b55-cee6-4392-bbe5-c2793017bea5",
+          parkingLinkText: "Recreation.gov",
+          parkingNote: "Required at Spruces, Mill D, etc."
+        },
+        {
+          id: "park-city",
+          name: "Park City",
+          sheetNames: ["canyons", "park city"],
+          region: "pc",
+          regionLabel: "PC",
+          lat: 40.6461,
+          lon: -111.4980,
+          webcamUrl: "https://www.skiutah.com/resorts/park-city-mountain/webcams",
+          parkingTitle: "Park City Mtn",
+          parkingUrl: "https://www.parkcitymountain.com/plan-your-trip/getting-here/parking.aspx",
+          parkingLinkText: "Reservations",
+          parkingNote: "Res required at Mtn Village (free with 4+ carpool). Canyons Village Cabriolet lot is free."
+        },
+        {
+          id: "deer-valley",
+          name: "Deer Valley",
+          sheetNames: ["deer valley"],
+          region: "pc",
+          regionLabel: "PC",
+          lat: 40.6374,
+          lon: -111.4783,
+          webcamUrl: "https://www.skiutah.com/resorts/deer-valley-resort/webcams",
+          parkingTitle: "Deer Valley",
+          parkingUrl: "https://www.deervalley.com/plan-your-trip/getting-here",
+          parkingLinkText: "Getting Here",
+          parkingNote: "Mostly free. Pilot paid reservations at Jordanelle."
+        },
+        {
+          id: "snowbasin",
+          name: "Snowbasin",
+          sheetNames: ["snowbasin"],
+          region: "ogden",
+          regionLabel: "OGD",
+          lat: 41.2160,
+          lon: -111.8569,
+          webcamUrl: "https://www.snowbasin.com/the-mountain/web-cams/",
+          parkingTitle: "Snowbasin",
+          parkingUrl: "https://www.snowbasin.com/getting-here/parking",
+          parkingLinkText: "Parking Info",
+          parkingNote: "Free; no res required. Earl's Lot A carpool (3+) on weekends."
+        },
+        {
+          id: "powder-mountain",
+          name: "Powder Mountain",
+          sheetNames: ["powder mountain"],
+          region: "ogden",
+          regionLabel: "OGD",
+          lat: 41.3790,
+          lon: -111.7807,
+          webcamUrl: "https://powdermountain.com/conditions",
+          parkingTitle: "Powder Mountain",
+          parkingUrl: "https://powdermountain.com/conditions",
+          parkingLinkText: "Parking & Zones",
+          parkingNote: "Mon–Fri Free. Sat–Sun & Holidays $12 via ParkMobile on-site (Free with 3+ carpool or after 1pm)."
+        }
+      ];
+
+      // =========================================================================
+      // 2. STATE INITIALIZED WITH EXACT REAL DATA FROM YOUR LIVE STATIONS & SHEET
+      // =========================================================================
+      // Sourced live Powder Mountain webcams (Mountain cams, Snow Stake cam, and UDOT SR-158 highway cams)
+      const POWDER_MOUNTAIN_WEBCAMS = [
+        {
+          title: "Powder Mountain Snow Stake (8,900')",
+          url: "https://www.ixnay.net/cams/pm/s1/current.jpg",
+          fallbackUrl: "https://ots-webcams.s3.amazonaws.com/325/25620/2026-10-22_0034/la.jpg",
+          link: "https://www.ixnay.net/cams/powdermountain/"
+        },
+        {
+          title: "Timberline Lodge & Lift",
+          url: "https://www.ixnay.net/cams/pm/s4/current.jpg",
+          fallbackUrl: "https://www.skiresort-service.com/typo3temp/_processed_/_cams_/webcam_74056.jpg",
+          link: "https://www.ixnay.net/cams/powdermountain/"
+        },
+        {
+          title: "Lightning Ridge & James Peak",
+          url: "https://ots-webcams.s3.amazonaws.com/325/25620/2026-10-22_0034/la.jpg",
+          fallbackUrl: "https://www.ixnay.net/cams/pm/s4/current.jpg",
+          link: "https://www.skiutah.com/members/powder-mountain/"
+        },
+        {
+          title: "Paradise & Village View",
+          url: "https://www.skiresort-service.com/typo3temp/_processed_/_cams_/webcam_74056.jpg",
+          fallbackUrl: "https://www.ixnay.net/cams/pm/s1/current.jpg",
+          link: "https://www.skiutah.com/members/powder-mountain/"
+        },
+        {
+          title: "Road | SR-158 @ Powder Mtn (MP 11.6)",
+          url: "https://www.udottraffic.utah.gov/map/Cctv/168156",
+          fallbackUrl: "https://www.udottraffic.utah.gov/map/Cctv/165869",
+          link: "https://udottraffic.utah.gov/"
+        },
+        {
+          title: "Road | SR-158 Canyon Climb (MP 8.3)",
+          url: "https://www.udottraffic.utah.gov/map/Cctv/166786",
+          fallbackUrl: "https://www.udottraffic.utah.gov/map/Cctv/165883",
+          link: "https://udottraffic.utah.gov/"
+        }
+      ];
+
+      const state = {
+        selectedRegion: "all",
+        selectedResorts: new Set(RESORTS.map(r => r.id)),
+        sortBy: "default",
+        telemetryView: "overview",
+        forecastView: "overview",
+        rawWebcams: { "Powder Mountain": POWDER_MOUNTAIN_WEBCAMS },
+
+        slc: {
+          updated: "Live NWS",
+          alerts: [],
+          current: { temp: 47, cond: "Mostly Sunny", wind: "9 mph SW", icon: "" },
+          forecast: [
+            { name: "This Afternoon", high: 47, low: 32, cond: "Mostly Sunny", precip: "14%" },
+            { name: "Saturday", high: 49, low: 32, cond: "Mostly Sunny", precip: "1%" },
+            { name: "Sunday", high: 48, low: 33, cond: "Slight Chance Light Rain", precip: "18%" }
+          ]
+        },
+
+        // Exact figures from your live UAC Weather Stations, NWS AVG, and Snow Forecast tabs
+        resortData: {
+          "alta": {
+            cond: "-", tempBase: "28", tempSummit: "33", windBase: "2 E", windSummit: "0 N",
+            depthBase: "2", depthSummit: "0", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "37/37", tempP2: "40/28", cloudP1: "33%", cloudP2: "28%", windP1: "2.8", windP2: "3.6", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "snowbird": {
+            cond: "-", tempBase: "33", tempSummit: "28", windBase: "0 N", windSummit: "2 E",
+            depthBase: "0", depthSummit: "2", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "37/37", tempP2: "40/28", cloudP1: "33%", cloudP2: "28%", windP1: "2.8", windP2: "3.6", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "brighton": {
+            cond: "-", tempBase: "35", tempSummit: "24", windBase: "-", windSummit: "9 S",
+            depthBase: "-", depthSummit: "1", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "35/35", tempP2: "38/26", cloudP1: "35%", cloudP2: "28%", windP1: "2.5", windP2: "3.0", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "solitude": {
+            cond: "-", tempBase: "24", tempSummit: "24", windBase: "9 S", windSummit: "1 E",
+            depthBase: "-", depthSummit: "0", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "35/35", tempP2: "38/26", cloudP1: "35%", cloudP2: "28%", windP1: "2.5", windP2: "3.0", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "spruces": {
+            cond: "-", tempBase: "39", tempSummit: "39", windBase: "1 E", windSummit: "1 E",
+            depthBase: "0", depthSummit: "0", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "38/38", tempP2: "41/27", cloudP1: "33%", cloudP2: "29%", windP1: "2.4", windP2: "2.9", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "park-city": {
+            cond: "-", tempBase: "36", tempSummit: "37", windBase: "-", windSummit: "5 N",
+            depthBase: "0", depthSummit: "-", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "38/38", tempP2: "41/28", cloudP1: "30%", cloudP2: "29%", windP1: "2.5", windP2: "2.8", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "deer-valley": {
+            cond: "-", tempBase: "40", tempSummit: "34", windBase: "2 SSE", windSummit: "0 N",
+            depthBase: "-", depthSummit: "-", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "38/38", tempP2: "41/28", cloudP1: "30%", cloudP2: "29%", windP1: "2.5", windP2: "2.8", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "snowbasin": {
+            cond: "-", tempBase: "34", tempSummit: "28", windBase: "2 NE", windSummit: "-",
+            depthBase: "-", depthSummit: "-", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "46/46", tempP2: "49/35", cloudP1: "63%", cloudP2: "21%", windP1: "2.5", windP2: "4.3", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          },
+          "powder-mountain": {
+            cond: "-", tempBase: "34", tempSummit: "29", windBase: "2 NE", windSummit: "24 WSW",
+            depthBase: "-", depthSummit: "-", snow24Base: "-", snow24Summit: "-",
+            low24: 0, exp24: 0, high24: 0, low48: 0, exp48: 0, high48: 0, low72: 0, exp72: 0, high72: 0,
+            tempP1: "46/46", tempP2: "49/35", cloudP1: "63%", cloudP2: "21%", windP1: "2.5", windP2: "4.3", snowP1: "0", snowP2: "0",
+            supTemp: false, supDepth: false, supSnow: false
+          }
+        },
+
+        avy: {
+          date: "Thu 6/18",
+          danger: "None",
+          bottomLine: "Thank you for a great season. We’ll see you next fall at the 33rd Annual Backcountry Benefit on Thursday, September 10.",
+          weather: "No active daily UAC mountain weather summary issued yet for the season.",
+          roseUrl: ""
+        },
+
+        weenies: {
+          title: "The Jet Stream Is Broken",
+          date: "Thu 10/22 7:59 am",
+          link: "https://wasatchweatherweenies.blogspot.com/2026/10/the-jet-stream-is-broken.html",
+          summary: "The current snowpack is minimal, with the snow line retreated to nearly 10,000 feet, effectively restarting the season for skiers. An upper-level trough today and tomorrow will bring some storms, but snow levels will remain high (above 11,000 feet initially), leading to limited accumulations (an average of 6 inches for Alta-Collins by Saturday), which is insufficient for skiing. Beyond this, a \"broken\" jet stream pattern suggests mostly lighter precipitation through October, though about 10% of models predict 20+ inches by November 1st."
+        },
+
+        xc: [
+          { location: "Millcreek Canyon", date: "March 10, 2026", summary: "Coverage is better than expected, with the lower canyon getting 6\" and upper 10\"+ in the last storm. Coverage is thin in a few of the expected places. Conditions are not great for Nordic but good for skinning. They will get much worse on the 15th when snow plowing begins in order to resume road construction. Just FYI for those wanting to be on snow in this canyon another day or two.", link: "https://utahnordic.org/millcreek-canyon/" },
+          { location: "SR-65 (Big Mountain)", date: "February 23, 2026", summary: "Our trail is unskiable. The forecast is for warmer temps and rain. The 10 day forecast is poor and will likely put an end to our one day of grooming season.", link: "https://utahnordic.org/sr-65/" },
+          { location: "Spruces", date: "March 21, 2026", summary: "Good morning Spruces skiers. We have officially concluded grooming operations for the season. We have had warm temperatures all week and much of the ski trail has melted to pavement. Thanks to all the USFS staff, TUNA groomers and other volunteers who helped groom, shovel, and work on machines this season.", link: "https://utahnordic.org/spruces/" },
+          { location: "Mountain Dell", date: "March 6, 2026", summary: "Friday morning update: Last night’s snow only adds up to about 2-3 inches, and all pavement is bare or barely covered. Not possible to groom. Sigh. But Spruces got another 8 inches from this storm and is still being groomed regularly. Well worth a visit.", link: "https://utahnordic.org/mountain-dell-2/" },
+          { location: "White Pine Touring", date: "March 24, 2026", summary: "Haiku thoughts:\nSpring is springing up,\nClimate change is real for us,\nSkiers know the truth.", link: "https://utahnordic.org/white-pine-touring/" },
+          { location: "Round Valley (MTF)", date: "Unknown", summary: "Round and round we go in the revolving door of mud season and extended hike and bike season. Winter prep also continued in Round Valley with markers being pounded into the ground and grooming corridors were mowed.", link: "https://mountaintrails.org/winter-daily-report/" }
+        ],
+
+        roads: {
+          routes: [
+            { id: "bcc", name: "Big Cottonwood", sub: "SR-190 (Solitude / Brighton)", weather: "--", surface: "--", status: "OPEN", badge: "s-open", region: "bcc" },
+            { id: "lcc", name: "Little Cottonwood", sub: "SR-210 (Alta / Snowbird)", weather: "--", surface: "--", status: "OPEN", badge: "s-open", region: "lcc" },
+            { id: "parleys", name: "Parleys Canyon", sub: "I-80 (Park City)", weather: "--", surface: "--", status: "OPEN", badge: "s-open", region: "pc" },
+            { id: "sr224", name: "Park City / Deer Valley", sub: "SR-224", weather: "--", surface: "--", status: "OPEN", badge: "s-open", region: "pc" },
+            { id: "sr158", name: "Powder Mountain Rd", sub: "SR-158 / SR-226 (Ogden Valley)", weather: "--", surface: "--", status: "OPEN", badge: "s-open", region: "ogden" }
+          ],
+          signs: [
+            { name: "BCC Approach (6200 S)", text: "BLANK" },
+            { name: "Big Cottonwood (Mouth)", text: "BLANK" },
+            { name: "LCC Approach (Wasatch)", text: "BLANK" },
+            { name: "Little Cottonwood (Mouth)", text: "BLANK" }
+          ],
+          updates: []
+        }
+      };
+
+      // =========================================================================
+      // 3. FILTER & SORT HELPERS
+      // =========================================================================
+      function parseNum(v, fallback = -999) {
+        if (v === null || v === undefined || v === "-" || v === "") return fallback;
+        const n = parseFloat(String(v).replace(/[^0-9.-]/g, ""));
+        return isNaN(n) ? fallback : n;
+      }
+
+      function getFilteredAndSortedResorts(includeSpruces = true) {
+        let list = RESORTS.filter(r => {
+          if (!includeSpruces && r.id === "spruces") return false;
+          if (!state.selectedResorts.has(r.id)) return false;
+          if (state.selectedRegion !== "all" && r.region !== state.selectedRegion) return false;
+          return true;
+        });
+
+        const s = state.sortBy;
+        if (s !== "default") {
+          list = [...list].sort((a, b) => {
+            const da = state.resortData[a.id] || {};
+            const db = state.resortData[b.id] || {};
+            if (s === "snow24") return parseNum(db.snow24Summit, 0) - parseNum(da.snow24Summit, 0);
+            if (s === "snow48") return parseNum(db.exp48, 0) - parseNum(da.exp48, 0);
+            if (s === "snow72") return parseNum(db.exp72, 0) - parseNum(da.exp72, 0);
+            if (s === "base") return parseNum(db.depthSummit, -1) - parseNum(da.depthSummit, -1);
+            if (s === "temp") return parseNum(da.tempSummit, 999) - parseNum(db.tempSummit, 999);
+            if (s === "wind") return parseNum(da.windSummit, 999) - parseNum(db.windSummit, 999);
+            return 0;
+          });
+        }
+        return list;
+      }
+
+      // =========================================================================
+      // 4. LIVE FETCHING (Netlify Function OR Live Apps Script CORS + Direct NWS)
+      // =========================================================================
+      async function fetchBackendRoute(route) {
+        // 1. If hosted on Netlify (http/https and not file://), try the Netlify function first
+        if (window.location.protocol.startsWith("http") && !window.location.hostname.includes("googleusercontent")) {
+          try {
+            const netlifyUrl = window.location.origin + "/.netlify/functions/api?q=" + route;
+            const resp = await fetch(netlifyUrl);
+            if (resp.ok) {
+              const ct = resp.headers.get("content-type") || "";
+              if (ct.includes("application/json")) {
+                return await resp.json();
+              }
+            }
+          } catch (e) {
+            // Fall through to live GAS endpoint
+          }
+        }
+        // 2. Fallback to your live CORS-enabled Apps Script Web App so opening index.html locally works 100%!
+        const gasEndpoint = GAS_MAIN_URL + "?q=" + route;
+        const resp = await fetch(gasEndpoint);
+        return await resp.json();
+      }
+
+      async function fetchLiveMainData() {
+        try {
+          const data = await fetchBackendRoute("main");
+          if (!data || data.error) return;
+
+          // Update Avy & Weather Summary
+          if (data.avy) {
+            state.avy.date = data.avy.date || state.avy.date;
+            state.avy.danger = data.avy.danger || "None";
+            state.avy.bottomLine = data.avy.bottomLine || state.avy.bottomLine;
+            state.avy.weather = data.avy.weather || "";
+            state.avy.roseUrl = data.avy.roseUrl || "";
+            renderAvy();
+          }
+
+          // Update Weather Weenies
+          if (data.forecast) {
+            state.weenies.title = data.forecast.title || state.weenies.title;
+            state.weenies.date = data.forecast.date || state.weenies.date;
+            state.weenies.summary = data.forecast.summary || state.weenies.summary;
+            state.weenies.link = data.forecast.link || state.weenies.link;
+            renderWeenies();
+          }
+
+          // Update XC Grooming
+          if (Array.isArray(data.xc) && data.xc.length > 0) {
+            state.xc = data.xc.filter(r => r.location && r.location !== "Location");
+            renderXC();
+          }
+
+          // If returned from GAS_MAIN_URL (classic schema with telemetry.table & plumes)
+          if (data.telemetry && Array.isArray(data.telemetry.table)) {
+            parseClassicTelemetryAndPlumes(data);
+          } else if (data.stations && data.stations.byResort) {
+            parseNetlifyStationsAndAvg(data);
+          }
+
+          renderTelemetry();
+          renderForecast();
+        } catch (e) {
+          console.error("Main Fetch Error:", e);
+        }
+      }
+
+      function parseClassicTelemetryAndPlumes(data) {
+        if (data.telemetry.updated) {
+          document.getElementById("telemetry-header-date").textContent = formatCustom(cleanTime(data.telemetry.updated), "time");
+        }
+        const reportMap = {};
+        if (Array.isArray(data.resortReports)) {
+          data.resortReports.forEach(r => {
+            if (r.resort) reportMap[r.resort.trim().toLowerCase()] = r;
+          });
+        }
+
+        const findResortId = (rawName) => {
+          const clean = (rawName || "").trim().toLowerCase();
+          for (const r of RESORTS) {
+            if (r.sheetNames.includes(clean) || r.name.toLowerCase() === clean) return r.id;
+          }
+          return null;
+        };
+
+        let section = "";
+        data.telemetry.table.forEach(row => {
+          const c1 = row[0] ? row[0].toString().trim() : "";
+          if (!c1 && !row[1] && !row[2]) return;
+          const low = c1.toLowerCase();
+          if (low.includes("current temp")) { section = "temp"; return; }
+          if (low.includes("wind")) { section = "wind"; return; }
+          if (low.includes("snow depth")) { section = "depth"; return; }
+          if (low.includes("24 hr")) { section = "snow24"; return; }
+          if (low.includes("location") || low.includes("station")) return;
+
+          const id = findResortId(c1);
+          if (!id || !state.resortData[id]) return;
+          const rd = state.resortData[id];
+          const v1 = (row[1] !== undefined && row[1] !== null && row[1] !== "") ? row[1].toString().trim() : "-";
+          const v2 = (row[2] !== undefined && row[2] !== null && row[2] !== "") ? row[2].toString().trim() : "-";
+
+          if (section === "temp") {
+            rd.tempBase = v1;
+            rd.tempSummit = v2;
+          } else if (section === "wind") {
+            rd.windBase = v1;
+            rd.windSummit = v2;
+          } else if (section === "depth") {
+            rd.depthBase = v1;
+            rd.depthSummit = v2;
+          } else if (section === "snow24") {
+            rd.snow24Base = v1;
+            rd.snow24Summit = v2;
+          }
+        });
+
+        // Also mirror shared canyon telemetry to Snowbird (LCC), Brighton (BCC), Deer Valley (PC), Powder Mtn (Ogden)
+        // when the legacy sheet only had 5 rows
+        if (state.resortData["alta"]) {
+          state.resortData["snowbird"].tempBase = state.resortData["alta"].tempSummit;
+          state.resortData["snowbird"].tempSummit = state.resortData["alta"].tempBase;
+        }
+
+        // Apply resort report supplement (bright blue numbers when telemetry is missing)
+        RESORTS.forEach(r => {
+          const rd = state.resortData[r.id];
+          const rep = reportMap[r.name.toLowerCase()];
+          if (!rd || !rep) return;
+          if (rep.weather && rep.weather !== "-") {
+            rd.cond = rep.weather.split(",")[0].trim();
+            const m = rep.weather.match(/(\d+)(?:&deg;|°)/);
+            if (m) {
+              if (!rd.tempBase || rd.tempBase === "-") { rd.tempBase = m[1]; rd.supTempBase = true; }
+              if (!rd.tempSummit || rd.tempSummit === "-") { rd.tempSummit = m[1]; rd.supTempSummit = true; }
+            }
+          }
+          if (rep.base && rep.base !== "-") {
+            if (!rd.depthBase || rd.depthBase === "-") { rd.depthBase = rep.base; rd.supDepthBase = true; }
+            if (!rd.depthSummit || rd.depthSummit === "-") { rd.depthSummit = rep.base; rd.supDepthSummit = true; }
+          }
+          if (rep.snow24 && rep.snow24 !== "-") {
+            if (!rd.snow24Base || rd.snow24Base === "-") { rd.snow24Base = rep.snow24; rd.supSnowBase = true; }
+            if (!rd.snow24Summit || rd.snow24Summit === "-") { rd.snow24Summit = rep.snow24; rd.supSnowSummit = true; }
+          }
+        });
+
+        // Parse Plumes / AVG Forecast
+        if (data.plumes) {
+          if (data.plumes.updated) {
+            document.getElementById("plumes-header-date").textContent = formatCustom(cleanTime(data.plumes.updated), "time");
+          }
+          const applyPlumeArr = (arr, k1, k2) => {
+            if (!Array.isArray(arr)) return;
+            arr.forEach(item => {
+              const id = findResortId(item.loc);
+              if (id && state.resortData[id]) {
+                state.resortData[id][k1] = item.p1;
+                state.resortData[id][k2] = item.p2;
+              }
+            });
+          };
+          applyPlumeArr(data.plumes.temp, "tempP1", "tempP2");
+          applyPlumeArr(data.plumes.cloud, "cloudP1", "cloudP2");
+          applyPlumeArr(data.plumes.wind, "windP1", "windP2");
+          applyPlumeArr(data.plumes.snow, "snowP1", "snowP2");
+
+          // Sync shared canyon AVG forecast to sister resorts when legacy sheet only returns 5 rows
+          const copyAvg = (fromId, toId) => {
+            const src = state.resortData[fromId];
+            const dst = state.resortData[toId];
+            if (!src || !dst) return;
+            ["tempP1", "tempP2", "cloudP1", "cloudP2", "windP1", "windP2", "snowP1", "snowP2"].forEach(k => {
+              if (src[k]) dst[k] = src[k];
+            });
+          };
+          copyAvg("alta", "snowbird");
+          copyAvg("solitude", "brighton");
+          copyAvg("park-city", "deer-valley");
+          copyAvg("snowbasin", "powder-mountain");
+        }
+      }
+
+      function parseNetlifyStationsAndAvg(data) {
+        for (const id of Object.keys(data.stations.byResort)) {
+          const st = data.stations.byResort[id];
+          const rep = (data.resortReports && data.resortReports[id]) || {};
+          const avg = (data.avgForecast && data.avgForecast.byResort && data.avgForecast.byResort[id]) || {};
+          const rd = state.resortData[id];
+          if (!rd) continue;
+
+          if (st.base && st.base.temp != null) rd.tempBase = Math.round(st.base.temp);
+          if (st.summit && st.summit.temp != null) rd.tempSummit = Math.round(st.summit.temp);
+          if (st.base && st.base.windSpeed != null) rd.windBase = `${Math.round(st.base.windSpeed)} ${st.base.windDir || ""}`.trim();
+          if (st.summit && st.summit.windSpeed != null) rd.windSummit = `${Math.round(st.summit.windSpeed)} ${st.summit.windDir || ""}`.trim();
+          if (st.base && st.base.snowDepth != null) rd.depthBase = Math.round(st.base.snowDepth);
+          if (st.summit && st.summit.snowDepth != null) rd.depthSummit = Math.round(st.summit.snowDepth);
+          if (st.summit && st.summit.snow24h != null) rd.snow24Summit = st.summit.snow24h;
+
+          if (rep.weather && rep.weather !== "-") rd.cond = rep.weather;
+          if (avg.tempP1) rd.tempP1 = avg.tempP1;
+          if (avg.tempP2) rd.tempP2 = avg.tempP2;
+          if (avg.cloudP1) rd.cloudP1 = avg.cloudP1;
+          if (avg.cloudP2) rd.cloudP2 = avg.cloudP2;
+          if (avg.windP1) rd.windP1 = avg.windP1;
+          if (avg.windP2) rd.windP2 = avg.windP2;
+          if (avg.snowP1) rd.snowP1 = avg.snowP1;
+          if (avg.snowP2) rd.snowP2 = avg.snowP2;
+        }
+      }
+
+      // Direct Browser NWS Salt Lake Valley Forecast (Plus GAS 'slc' route for exact station match)
+      async function fetchLiveSlc() {
+        try {
+          const gasSlc = await fetchBackendRoute("slc");
+          if (gasSlc && gasSlc.current) {
+            state.slc = gasSlc;
+            state.slc.updated = "NWS Forecast";
+            renderSLC();
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          const resp = await fetch("https://api.weather.gov/gridpoints/SLC/107,172/forecast");
+          if (!resp.ok) return;
+          const data = await resp.json();
+          const periods = data.properties && data.properties.periods;
+          if (!periods || periods.length === 0) return;
+
+          const cur = periods[0];
+          state.slc.current = {
+            temp: cur.temperature,
+            cond: cur.shortForecast,
+            wind: `${cur.windSpeed} ${cur.windDirection}`,
+            icon: cur.icon || ""
+          };
+
+          const days = [];
+          for (let i = 0; i < periods.length && days.length < 3; i++) {
+            const p = periods[i];
+            if (p.isDaytime || i === 0) {
+              const nextP = periods[i + 1];
+              const high = p.isDaytime ? p.temperature : (nextP ? nextP.temperature : p.temperature);
+              const low = !p.isDaytime ? p.temperature : (nextP ? nextP.temperature : p.temperature - 14);
+              const pop = (p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value) || 0;
+              days.push({
+                name: p.name,
+                high,
+                low,
+                cond: p.shortForecast,
+                precip: `${pop}%`
+              });
+            }
+          }
+          if (days.length > 0) state.slc.forecast = days;
+          state.slc.updated = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+          renderSLC();
+        } catch (e) {}
+      }
+
+      // Direct Browser NWS Gridpoint 24h / 48h / 72h Snowfall Forecast (Exact logic from your snow.gs script!)
+      async function fetchDirectNwsResorts() {
+        const parseSnowFromText = (text) => {
+          const t = (text || "").toLowerCase();
+          const rangeMatch = t.match(/accumulation of (\d+)\s*to\s*(\d+)\s*inch/);
+          const singleMatch = t.match(/accumulation around (\d+)\s*inch/);
+          const lessMatch = t.match(/accumulation less than 1 inch/);
+          const traceMatch = t.match(/accumulation less than half an inch/);
+          if (rangeMatch) {
+            const l = parseInt(rangeMatch[1], 10);
+            const h = parseInt(rangeMatch[2], 10);
+            return { l, h, e: (l + h) / 2 };
+          }
+          if (singleMatch) {
+            const v = parseInt(singleMatch[1], 10);
+            return { l: v, h: v, e: v };
+          }
+          if (lessMatch) return { l: 0, h: 1, e: 0.5 };
+          if (traceMatch) return { l: 0, h: 0, e: 0 };
+          return { l: 0, h: 0, e: 0 };
+        };
+
+        await Promise.allSettled(
+          RESORTS.map(async (resort) => {
+            try {
+              const ptResp = await fetch(`https://api.weather.gov/points/${resort.lat},${resort.lon}`);
+              if (!ptResp.ok) return;
+              const ptData = await ptResp.json();
+              const fcUrl = ptData.properties && ptData.properties.forecast;
+              if (!fcUrl) return;
+
+              const fcResp = await fetch(fcUrl);
+              if (!fcResp.ok) return;
+              const fcData = await fcResp.json();
+              const periods = (fcData.properties && fcData.properties.periods) || [];
+              if (periods.length === 0) return;
+
+              let low24 = 0, high24 = 0, exp24 = 0;
+              let low48 = 0, high48 = 0, exp48 = 0;
+              let low72 = 0, high72 = 0, exp72 = 0;
+
+              for (let i = 0; i < Math.min(periods.length, 6); i++) {
+                const { l, h, e } = parseSnowFromText(periods[i].detailedForecast);
+                low72 += l; high72 += h; exp72 += e;
+                if (i < 4) { low48 += l; high48 += h; exp48 += e; }
+                if (i < 2) { low24 += l; high24 += h; exp24 += e; }
+              }
+
+              const rd = state.resortData[resort.id];
+              if (rd) {
+                if (!rd.cond || rd.cond === "-") rd.cond = periods[0].shortForecast || "-";
+                rd.low24 = low24; rd.exp24 = exp24; rd.high24 = high24;
+                rd.low48 = low48; rd.exp48 = exp48; rd.high48 = high48;
+                rd.low72 = low72; rd.exp72 = exp72; rd.high72 = high72;
+              }
+            } catch (e) {}
+          })
+        );
+        renderTelemetry();
+        renderForecast();
+      }
+
+      // Live U of U Plumes Image
+      async function fetchLivePlumesImage() {
+        const loadingEl = document.getElementById("uofu-loading");
+        const imgEl = document.getElementById("uofu-img");
+        try {
+          const res = await fetchBackendRoute("plumes");
+          if (res && res.success && res.data) {
+            loadingEl.style.display = "none";
+            imgEl.src = res.data;
+            imgEl.style.display = "block";
+            return;
+          }
+        } catch (e) {}
+
+        // Direct fallback URL construction for U of U GEFS Plumes
+        const now = new Date();
+        const y = now.getUTCFullYear();
+        const m = String(now.getUTCMonth() + 1).padStart(2, "0");
+        const d = String(now.getUTCDate()).padStart(2, "0");
+        imgEl.src = `https://weather.utah.edu/${y}${m}${d}/images/models/ensgefsds/ENSGEFSDSPL_CLN${y}${m}${d}00F240.png`;
+        loadingEl.style.display = "none";
+        imgEl.style.display = "block";
+      }
+
+      // Live Ski Utah + Powder Mountain Webcams
+      async function fetchLiveWebcams() {
+        try {
+          const data = await fetchBackendRoute("cams");
+          if (data && data.resorts) {
+            const merged = { ...data.resorts };
+            if (!merged["Powder Mountain"] || merged["Powder Mountain"].length === 0) {
+              merged["Powder Mountain"] = POWDER_MOUNTAIN_WEBCAMS;
+            }
+            state.rawWebcams = merged;
+            renderWebcams();
+          }
+        } catch (e) {
+          console.error("Webcams error:", e);
+        }
+      }
+
+      // Live UDOT Roads & RSS Updates
+      async function fetchLiveRoads() {
+        try {
+          const rssResp = await fetch(UDOT_RSS_URL);
+          const rssData = await rssResp.json();
+          if (rssData.status === "ok" && Array.isArray(rssData.items)) {
+            let bcc = "OPEN", lcc = "OPEN", bccB = "s-open", lccB = "s-open";
+            const getStatus = (text) => {
+              if (text.includes("closed")) return { s: "CLOSED", b: "s-closed" };
+              if (text.includes("traction")) {
+                if (text.includes("lifted") || text.includes("removed") || text.includes("ended")) return { s: "OPEN", b: "s-open" };
+                return { s: "TRACTION LAW", b: "s-traction" };
+              }
+              return null;
+            };
+            let bccFound = false, lccFound = false;
+            for (let i = 0; i < Math.min(rssData.items.length, 5); i++) {
+              const txt = (rssData.items[i].title + " " + rssData.items[i].description).toLowerCase();
+              if (!bccFound && (txt.includes("bcc") || txt.includes("sr-190"))) {
+                const res = getStatus(txt); if (res) { bcc = res.s; bccB = res.b; bccFound = true; }
+              }
+              if (!lccFound && (txt.includes("lcc") || txt.includes("sr-210"))) {
+                const res = getStatus(txt); if (res) { lcc = res.s; lccB = res.b; lccFound = true; }
+              }
+            }
+            state.roads.routes.forEach(r => {
+              if (r.id === "bcc") { r.status = bcc; r.badge = bccB; }
+              if (r.id === "lcc") { r.status = lcc; r.badge = lccB; }
+            });
+            state.roads.updates = rssData.items.slice(0, 2).map(i =>
+              i.description.replace(/<[^>]*>/g, "").replace(/The post.*?(\.|$)/gi, "").trim()
+            );
+            renderRoads();
+          }
+        } catch (e) {}
+
+        try {
+          const url = GAS_ROADS_URL + "?t=" + new Date().getTime();
+          const resp = await fetch(url);
+          const data = await resp.json();
+          if (data.routes) {
+            data.routes.forEach(rt => {
+              const target = state.roads.routes.find(x => x.id === rt.id);
+              if (target) {
+                target.weather = rt.weather;
+                target.surface = rt.surface;
+              }
+            });
+          }
+          if (data.signs) {
+            state.roads.signs = data.signs;
+          }
+          renderRoads();
+        } catch (e) {}
+      }
+
+      // =========================================================================
+      // 5. DATE & TIME HELPERS (Preserved from your original index.html)
+      // =========================================================================
+      function cleanTime(str) {
+        if (!str) return "";
+        return str
+          .replace(/Weather Station Data as of:\s*/i, "")
+          .replace(/Updated:\s*/i, "")
+          .replace(/Last Updated:\s*/i, "")
+          .replace(/Date:\s*/i, "")
+          .replace(/Issued:\s*/i, "")
+          .replace(/Published:\s*/i, "")
+          .replace(/Posted:\s*/i, "")
+          .replace(/Synced:\s*/i, "")
+          .replace(/Station Data:/i, "")
+          .replace(/\|.*/, "")
+          .replace(/ - .*/, "")
+          .trim();
+      }
+
+      function formatCustom(str, mode) {
+        if (!str || str === "..." || str.trim() === "") return "";
+        str = str.trim();
+        let d = new Date(str);
+        const match = str.match(/(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/);
+        if (match) {
+          let p1 = parseInt(match[1], 10);
+          let p2 = parseInt(match[2], 10);
+          const mon = p1 > 12 ? p2 : p1;
+          const day = p1 > 12 ? p1 : p2;
+          let yr = match[3] ? parseInt(match[3], 10) : new Date().getFullYear();
+          if (yr < 100) yr += 2000;
+          d = new Date(yr, mon - 1, day);
+          const timeMatch = str.match(/(\d{1,2}):(\d{2})(?::\d{2})?(?:\s*(AM|PM))?/i);
+          if (timeMatch) {
+            let h = parseInt(timeMatch[1], 10);
+            const m = parseInt(timeMatch[2], 10);
+            const ap = timeMatch[3] ? timeMatch[3].toUpperCase() : null;
+            if (ap === "PM" && h < 12) h += 12;
+            if (ap === "AM" && h === 12) h = 0;
+            d.setHours(h, m);
+          }
+        } else if (isNaN(d.getTime())) {
+          const timeOnly = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
+          if (timeOnly) {
+            d = new Date();
+            let h = parseInt(timeOnly[1], 10);
+            const m = parseInt(timeOnly[2], 10);
+            const ap = timeOnly[3] ? timeOnly[3].toUpperCase() : null;
+            if (ap === "PM" && h < 12) h += 12;
+            if (ap === "AM" && h === 12) h = 0;
+            d.setHours(h, m, 0, 0);
+          }
+        }
+        if (isNaN(d.getTime())) return str;
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        if (mode === true || mode === "date") {
+          return `${days[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()}`;
+        }
+        let hours = d.getHours();
+        const ampm = hours >= 12 ? "pm" : "am";
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        let min = d.getMinutes();
+        min = min < 10 ? "0" + min : min;
+        if (mode === "time") {
+          return `${hours}:${min} ${ampm}`;
+        }
+        return `${days[d.getDay()]} ${d.getMonth() + 1}/${d.getDate()} ${hours}:${min} ${ampm}`;
+      }
+
+      // =========================================================================
+      // 6. UI RENDERERS
+      // =========================================================================
+      function renderFilterPills() {
+        const container = document.getElementById("resort-filters");
+        container.innerHTML = `<span class="control-label">Resorts:</span>`;
+
+        const allActive = state.selectedResorts.size === RESORTS.length && state.selectedRegion === "all";
+        const toggleAllBtn = document.createElement("button");
+        toggleAllBtn.type = "button";
+        toggleAllBtn.className = "pill-btn resort-pill" + (allActive ? " active" : "");
+        toggleAllBtn.textContent = allActive ? "✓ All Resorts" : "Show All Resorts";
+        toggleAllBtn.addEventListener("click", () => {
+          state.selectedResorts = new Set(RESORTS.map(r => r.id));
+          state.selectedRegion = "all";
+          syncRegionButtons();
+          renderAllResortSections();
+        });
+        container.appendChild(toggleAllBtn);
+
+        RESORTS.forEach(r => {
+          const isSelected = state.selectedResorts.has(r.id) && (state.selectedRegion === "all" || r.region === state.selectedRegion);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "pill-btn resort-pill" + (isSelected && !allActive ? " active" : "");
+          btn.textContent = r.name;
+          btn.addEventListener("click", () => {
+            if (state.selectedResorts.size === RESORTS.length && state.selectedRegion === "all") {
+              // Clicking a resort pill focuses on that resort; clicking it again restores all resorts!
+              state.selectedResorts = new Set([r.id]);
+            } else if (state.selectedResorts.size === 1 && state.selectedResorts.has(r.id)) {
+              state.selectedResorts = new Set(RESORTS.map(x => x.id));
+            } else {
+              if (state.selectedResorts.has(r.id)) {
+                state.selectedResorts.delete(r.id);
+              } else {
+                state.selectedResorts.add(r.id);
+              }
+            }
+            state.selectedRegion = "all";
+            syncRegionButtons();
+            renderAllResortSections();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function syncRegionButtons() {
+        document.querySelectorAll("#region-filters .pill-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.getAttribute("data-region") === state.selectedRegion);
+        });
+      }
+
+      const PIPE = `<span class="pipe-sep">|</span>`;
+
+      function cleanMetricVal(val, unit = "", isSup = false) {
+        if (val === null || val === undefined) return "-";
+        let s = String(val).trim();
+        if (s === "" || s === "-" || s.startsWith("- ")) return "-";
+        if (unit && !s.endsWith(unit) && !s.includes("°") && !s.includes('"')) s += unit;
+        return isSup ? `<span class="resort-sup">${s}</span>` : s;
+      }
+
+      function fmtPipePair(v1, v2, unit = "", sup1 = false, sup2 = false, boldSecond = true) {
+        const left = cleanMetricVal(v1, unit, sup1);
+        const right = cleanMetricVal(v2, unit, sup2);
+        return `${left}${PIPE}${boldSecond ? `<strong>${right}</strong>` : right}`;
+      }
+
+      function fmtHlPipe(str) {
+        if (!str || str === "-") return "-";
+        const parts = String(str).replace(/°/g, "").split(/[\/|]/).map(x => x.trim());
+        if (parts.length === 2) {
+          return `<strong>${parts[0]}&deg;</strong>${PIPE}${parts[1]}&deg;`;
+        }
+        return str;
+      }
+
+      function fmtWindAvg(val) {
+        if (val === null || val === undefined || val === "-") return "-";
+        const num = parseFloat(String(val).replace(/[^0-9.-]/g, ""));
+        if (isNaN(num)) return String(val);
+        const rounded = Math.round(num * 10) / 10;
+        return `${rounded} mph`;
+      }
+
+      function renderSLC() {
+        const slc = document.getElementById("slc-content");
+        document.getElementById("slc-header-date").textContent = state.slc.updated || "NWS Forecast";
+        let rows = "";
+        (state.slc.forecast || []).forEach(d => {
+          rows += `<tr>
+            <td class="slc-day">${d.name}</td>
+            <td class="slc-hl">${d.high}&deg;${PIPE}${d.low}&deg;</td>
+            <td class="slc-cond">${d.cond} <span style="color:#0284c7; font-weight:600;">(${d.precip})</span></td>
+          </tr>`;
+        });
+
+        const bgStyle = state.slc.current && state.slc.current.icon
+          ? `style="background-image: url('${state.slc.current.icon}');"`
+          : "";
+
+        let alertHtml = "";
+        if (state.slc.alerts && state.slc.alerts.length > 0) {
+          alertHtml = `<a href="https://forecast.weather.gov/MapClick.php?textField1=40.74&textField2=-111.86" target="_blank" rel="noopener" class="alert-banner">${state.slc.alerts.join(" | ")} ↗</a>`;
+        }
+
+        slc.innerHTML = `
+          ${alertHtml}
+          <div class="slc-flex-row">
+            <div class="slc-current" ${bgStyle}>
+              <div class="slc-temp">${state.slc.current.temp}&deg;</div>
+              <div class="slc-sub">${state.slc.current.cond}</div>
+              <div class="slc-sub" style="font-size:0.85rem; font-weight:500;">Wind: ${state.slc.current.wind}</div>
+            </div>
+            <div class="slc-forecast">
+              <div class="card-title"><span>3 Day Forecast (High | Low)</span><span>NWS SLC</span></div>
+              <table class="slc-table"><tbody>${rows}</tbody></table>
+            </div>
+          </div>`;
+      }
+
+      function renderTelemetry() {
+        const list = getFilteredAndSortedResorts(true);
+        const container = document.getElementById("telemetry-container");
+        document.getElementById("telemetry-count-badge").textContent = `${list.length} Shown`;
+
+        if (list.length === 0) {
+          container.innerHTML = `<div style="padding:20px; text-align:center; color:#64748b;">No resorts selected. Click "Show All Resorts" above.</div>`;
+          return;
+        }
+
+        const sortLabel = document.getElementById("sort-select").selectedOptions[0].text;
+        const view = state.telemetryView;
+
+        if (view === "overview") {
+          let html = `
+            <div class="metric-legend">
+              <span><strong>Base ${PIPE} Summit</strong> Telemetry &bull; Scroll ⇄</span>
+              <span>Sorted: ${sortLabel}</span>
+            </div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th class="col-loc">Location</th>
+                    <th>Temp (Base ${PIPE} Summit)</th>
+                    <th>Wind (Base ${PIPE} Summit)</th>
+                    <th>Base Depth (B ${PIPE} S)</th>
+                    <th>24h Snow (B ${PIPE} S)</th>
+                    <th>Sky / Cond</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            const tempCell = fmtPipePair(d.tempBase, d.tempSummit, "°", d.supTempBase, d.supTempSummit, true);
+            const windCell = fmtPipePair(d.windBase, d.windSummit, "", false, false, true);
+            const depthCell = fmtPipePair(d.depthBase, d.depthSummit, '"', d.supDepthBase, d.supDepthSummit, true);
+            const snow24Cell = fmtPipePair(d.snow24Base, d.snow24Summit, '"', d.supSnowBase, d.supSnowSummit, true);
+            html += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${tempCell}</td>
+                <td class="col-data">${windCell}</td>
+                <td class="col-data">${depthCell}</td>
+                <td class="col-data">${snow24Cell}</td>
+                <td style="font-size:0.76rem;color:#0284c7;font-weight:600;">${d.cond || "-"}</td>
+              </tr>`;
+          });
+
+          html += `</tbody></table></div>`;
+          container.innerHTML = html;
+        } else if (view === "temp") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            const tempCell = fmtPipePair(d.tempBase, d.tempSummit, "°", d.supTempBase, d.supTempSummit, true);
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${tempCell}</td>
+                <td style="font-size:0.76rem;color:#0284c7;font-weight:600;">${d.cond || "-"}</td>
+              </tr>`;
+          });
+          container.innerHTML = `
+            <div class="card-title"><span>Current Temperature &amp; Sky</span><span>Base ${PIPE} Summit</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>Temp (Base ${PIPE} Summit)</th><th>Sky / Conditions</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else if (view === "wind") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            const wBase = cleanMetricVal(d.windBase, " mph");
+            const wSum = cleanMetricVal(d.windSummit, " mph");
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${fmtPipePair(d.windBase, d.windSummit, "", false, false, true)}</td>
+                <td class="col-data">${wBase}</td>
+                <td class="col-data"><strong>${wSum}</strong></td>
+              </tr>`;
+          });
+          container.innerHTML = `
+            <div class="card-title"><span>Current Wind Speed &amp; Direction</span><span>Base ${PIPE} Summit</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>Base ${PIPE} Summit</th><th>Base Wind</th><th>Summit Wind</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else if (view === "snow") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            const s24 = fmtPipePair(d.snow24Base, d.snow24Summit, '"', d.supSnowBase, d.supSnowSummit, true);
+            const dep = fmtPipePair(d.depthBase, d.depthSummit, '"', d.supDepthBase, d.supDepthSummit, true);
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${s24}</td>
+                <td class="col-data">${dep}</td>
+              </tr>`;
+          });
+          container.innerHTML = `
+            <div class="card-title"><span>24h New Snow &amp; Total Base Depth</span><span>Base ${PIPE} Summit</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>24h Snow (Base ${PIPE} Summit)</th><th>Base Depth (Base ${PIPE} Summit)</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else {
+          let tempRows = "", windRows = "", depthRows = "", snowRows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            tempRows += `<tr><td class="col-loc">${r.name}</td><td style="font-size:0.75rem;color:#0284c7;font-weight:600;">${d.cond}</td><td class="col-data">${fmtPipePair(d.tempBase, d.tempSummit, "°", d.supTempBase, d.supTempSummit, true)}</td></tr>`;
+            windRows += `<tr><td class="col-loc">${r.name}</td><td class="col-data">${fmtPipePair(d.windBase, d.windSummit, "", false, false, true)}</td></tr>`;
+            depthRows += `<tr><td class="col-loc">${r.name}</td><td class="col-data">${fmtPipePair(d.depthBase, d.depthSummit, '"', d.supDepthBase, d.supDepthSummit, true)}</td></tr>`;
+            snowRows += `<tr><td class="col-loc">${r.name}</td><td class="col-data">${fmtPipePair(d.snow24Base, d.snow24Summit, '"', d.supSnowBase, d.supSnowSummit, true)}</td></tr>`;
+          });
+
+          container.innerHTML = `
+            <div class="table-scroll-wrap" style="max-height:400px; padding:10px;">
+              <div class="section-block">
+                <div class="card-title"><span>Current Temp</span><span>Base ${PIPE} Summit</span></div>
+                <table class="mini-table"><thead><tr><th class="col-loc">Location</th><th>Conditions</th><th>Base ${PIPE} Summit</th></tr></thead><tbody>${tempRows}</tbody></table>
+              </div>
+              <div class="section-block">
+                <div class="card-title"><span>Wind (mph)</span><span>Base ${PIPE} Summit</span></div>
+                <table class="mini-table"><thead><tr><th class="col-loc">Location</th><th>Base ${PIPE} Summit</th></tr></thead><tbody>${windRows}</tbody></table>
+              </div>
+              <div class="section-block">
+                <div class="card-title"><span>Snow Depth</span><span>Base ${PIPE} Summit</span></div>
+                <table class="mini-table"><thead><tr><th class="col-loc">Location</th><th>Base ${PIPE} Summit</th></tr></thead><tbody>${depthRows}</tbody></table>
+              </div>
+              <div class="section-block">
+                <div class="card-title"><span>24 Hr Snow</span><span>Base ${PIPE} Summit</span></div>
+                <table class="mini-table"><thead><tr><th class="col-loc">Location</th><th>Base ${PIPE} Summit</th></tr></thead><tbody>${snowRows}</tbody></table>
+              </div>
+            </div>`;
+        }
+      }
+
+      function renderForecast() {
+        const list = getFilteredAndSortedResorts(true);
+        const pCon = document.getElementById("plumes-body");
+        if (list.length === 0) {
+          pCon.innerHTML = `<div style="padding:20px; text-align:center; color:#64748b;">No resorts selected.</div>`;
+          return;
+        }
+
+        const view = state.forecastView;
+
+        if (view === "overview") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${fmtHlPipe(d.tempP1)}</td>
+                <td class="col-data">${fmtWindAvg(d.windP1)}${PIPE}${d.cloudP1}</td>
+                <td class="col-data">${d.snowP1}"${PIPE}<strong>${d.snowP2}"</strong></td>
+                <td class="col-data">${fmtHlPipe(d.tempP2)}</td>
+              </tr>`;
+          });
+          pCon.innerHTML = `
+            <div class="metric-legend">
+              <span><strong>Forecast Snapshot</strong> &bull; Scroll ⇄ for all columns</span>
+              <span>NWS AVG</span>
+            </div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th class="col-loc">Location</th>
+                    <th>24h Temp (H ${PIPE} L)</th>
+                    <th>24h Wind ${PIPE} Cloud</th>
+                    <th>Snow (24h ${PIPE} 48h)</th>
+                    <th>48h Temp (H ${PIPE} L)</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else if (view === "temp") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${fmtHlPipe(d.tempP1)}</td>
+                <td class="col-data">${fmtHlPipe(d.tempP2)}</td>
+              </tr>`;
+          });
+          pCon.innerHTML = `
+            <div class="card-title"><span>Forecast Temperature (High ${PIPE} Low)</span><span>NWS AVG</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>24 Hr (High ${PIPE} Low)</th><th>48 Hr (High ${PIPE} Low)</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else if (view === "wind") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${fmtWindAvg(d.windP1)}</td>
+                <td class="col-data"><strong>${fmtWindAvg(d.windP2)}</strong></td>
+              </tr>`;
+          });
+          pCon.innerHTML = `
+            <div class="card-title"><span>Forecast Wind Speed (mph)</span><span>NWS AVG</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>24 Hr Avg Wind</th><th>48 Hr Avg Wind</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else if (view === "cloud") {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${d.cloudP1}</td>
+                <td class="col-data"><strong>${d.cloudP2}</strong></td>
+              </tr>`;
+          });
+          pCon.innerHTML = `
+            <div class="card-title"><span>Forecast Cloud Cover (%)</span><span>NWS AVG</span></div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead><tr><th class="col-loc">Location</th><th>24 Hr Sky Cover</th><th>48 Hr Sky Cover</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        } else {
+          let rows = "";
+          list.forEach(r => {
+            const d = state.resortData[r.id] || {};
+            rows += `
+              <tr>
+                <td class="col-loc">${r.name}<span class="region-tag">${r.regionLabel}</span></td>
+                <td class="col-data">${d.low24}–${d.high24}"${PIPE}<strong>${d.exp24}"</strong></td>
+                <td class="col-data">${d.low48}–${d.high48}"${PIPE}<strong>${d.exp48}"</strong></td>
+                <td class="col-data">${d.low72}–${d.high72}"${PIPE}<strong>${d.exp72}"</strong></td>
+              </tr>`;
+          });
+
+          pCon.innerHTML = `
+            <div class="card-title">
+              <span>NWS 24h / 48h / 72h Snowfall (Range ${PIPE} Exp)</span>
+              <span>api.weather.gov</span>
+            </div>
+            <div class="table-scroll-wrap">
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th class="col-loc">Location</th>
+                    <th>24h (Range ${PIPE} Exp)</th>
+                    <th>48h (Range ${PIPE} Exp)</th>
+                    <th>72h (Range ${PIPE} Exp)</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>`;
+        }
+      }
+
+      function renderAvy() {
+        document.getElementById("avy-header-date").textContent = formatCustom(cleanTime(state.avy.date), true);
+        document.getElementById("weather-header-date").textContent = formatCustom(cleanTime(state.avy.date), true);
+        const dangerEl = document.getElementById("avy-danger");
+        dangerEl.textContent = state.avy.danger;
+
+        const d = (state.avy.danger || "").toLowerCase();
+        if (d.includes("high")) dangerEl.style.color = "#d32f2f";
+        else if (d.includes("considerable")) dangerEl.style.color = "#f57c00";
+        else if (d.includes("moderate")) dangerEl.style.color = "#fbc02d";
+        else if (d.includes("low")) dangerEl.style.color = "#388e3c";
+        else dangerEl.style.color = "#475569";
+
+        document.getElementById("avy-text").textContent = state.avy.bottomLine;
+        document.getElementById("current-text").textContent = state.avy.weather || "No UAC Mountain Weather Summary currently active.";
+
+        const roseImg = document.getElementById("avy-rose");
+        if (state.avy.roseUrl) {
+          roseImg.src = state.avy.roseUrl;
+          roseImg.style.display = "block";
+        } else {
+          roseImg.style.display = "none";
+        }
+      }
+
+      function renderWeenies() {
+        document.getElementById("blog-header-date").textContent = formatCustom(cleanTime(state.weenies.date));
+        document.getElementById("forecast-title").textContent = state.weenies.title;
+        document.getElementById("forecast-summary").textContent = state.weenies.summary;
+        document.getElementById("forecast-link").href = state.weenies.link;
+      }
+
+      function renderXC() {
+        const xc = document.getElementById("xc-list");
+        xc.innerHTML = "";
+        const xcLinks = {
+          "Millcreek Canyon": "https://utahnordic.org/millcreek-canyon/",
+          "SR-65 (Big Mountain)": "https://utahnordic.org/sr-65/",
+          "Spruces": "https://utahnordic.org/spruces/",
+          "Mountain Dell": "https://utahnordic.org/mountain-dell/",
+          "White Pine Touring": "https://utahnordic.org/white-pine-touring/",
+          "Round Valley (MTF)": "https://mountaintrails.org/winter-daily-report/"
+        };
+        state.xc.forEach((r, idx) => {
+          const url = r.link || xcLinks[r.location] || "https://utahnordic.org/grooming/";
+          const item = document.createElement("div");
+          item.className = "xc-item";
+          item.innerHTML = `
+            <div class="xc-header" data-xc-idx="${idx}">
+              <div><a href="${url}" target="_blank" rel="noopener" class="xc-loc-name">${r.location} ↗</a></div>
+              <div class="xc-actions"><span class="xc-date-stamp">${r.date}</span><span class="xc-chevron">⌄</span></div>
+            </div>
+            <div class="xc-summary">${r.summary}</div>`;
+          const header = item.querySelector(".xc-header");
+          const link = item.querySelector(".xc-loc-name");
+          link.addEventListener("click", (e) => e.stopPropagation());
+          header.addEventListener("click", () => {
+            header.classList.toggle("expanded");
+            header.nextElementSibling.classList.toggle("open");
+          });
+          xc.appendChild(item);
+        });
+      }
+
+      function renderWebcams() {
+        const list = getFilteredAndSortedResorts(false);
+        const container = document.getElementById("cam-container");
+        container.innerHTML = "";
+        document.getElementById("cam-filter-badge").textContent = `${list.length} Resorts`;
+
+        const getResortUrl = (n) => {
+          const directLinks = {
+            "Snowbird": "https://www.snowbird.com/the-mountain/webcams/",
+            "Snowbasin": "https://www.snowbasin.com/the-mountain/web-cams/",
+            "Sundance": "https://www.sundanceresort.com/webcams/",
+            "Solitude": "https://www.skiutah.com/resorts/solitude/webcams",
+            "Brighton": "https://www.skiutah.com/resorts/brighton/webcams",
+            "Alta": "https://www.skiutah.com/resorts/alta/webcams",
+            "Deer Valley": "https://www.skiutah.com/resorts/deer-valley-resort/webcams",
+            "Park City": "https://www.skiutah.com/resorts/park-city-mountain/webcams",
+            "Powder Mountain": "https://www.skiutah.com/members/powder-mountain/"
+          };
+          return directLinks[n] || "https://www.skiutah.com/resorts/webcams";
+        };
+
+        // Render live webcam feeds filtered by active resorts (including Powder Mountain!)
+        if (state.rawWebcams) {
+          const allowedNames = new Set(list.map(r => r.name.toLowerCase()));
+          const snowStakes = [];
+          const resorts = {};
+
+          for (const r in state.rawWebcams) {
+            const matchesFilter = Array.from(allowedNames).some(an => r.toLowerCase().includes(an) || an.includes(r.toLowerCase()));
+            if (!matchesFilter) continue;
+
+            const cams = state.rawWebcams[r];
+            resorts[r] = [];
+            cams.forEach(cam => {
+              if (cam.title.toLowerCase().includes("stake")) {
+                const subName = cam.title.replace(/Snow ?Stake( Cam)?/i, "").replace(r, "").replace(/^\(|\)$/g, "").trim();
+                const t = subName ? `${r} (${subName})` : r;
+                snowStakes.push({ title: t, url: cam.url, fallbackUrl: cam.fallbackUrl, link: cam.link, resort: r });
+              } else {
+                resorts[r].push(cam);
+              }
+            });
+          }
+
+          const createSection = (title, items, isStake) => {
+            const section = document.createElement("div");
+            section.className = "resort-section";
+            if (!isStake && list.length > 2) section.classList.add("collapsed");
+            const h = document.createElement("div");
+            h.className = "resort-header" + (isStake ? " snow-stake-header" : "");
+            h.innerHTML = `<span>${title} <span style="font-weight:500;color:#94a3b8;font-size:0.72rem;">(${items.length})</span></span><span class="resort-chevron">⌄</span>`;
+            h.addEventListener("click", () => section.classList.toggle("collapsed"));
+            section.appendChild(h);
+
+            const grid = document.createElement("div");
+            grid.className = "cam-grid";
+            items.forEach(c => {
+              const item = document.createElement("div");
+              item.className = "cam-item";
+              const t = document.createElement("div");
+              t.className = "cam-title";
+              t.textContent = isStake ? c.title : c.title.replace(title, "").trim() || "View";
+              const a = document.createElement("a");
+              a.href = c.link || getResortUrl(isStake ? c.resort : title);
+              a.target = "_blank";
+              a.rel = "noopener";
+              const img = document.createElement("img");
+              img.className = "cam-img";
+              img.loading = "lazy";
+              img.src = c.url;
+              img.alt = t.textContent;
+              img.addEventListener("error", function handleImgError() {
+                if (c.fallbackUrl && img.src !== c.fallbackUrl) {
+                  img.src = c.fallbackUrl;
+                } else {
+                  const label = encodeURIComponent(t.textContent);
+                  img.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180' viewBox='0 0 320 180'><rect width='320' height='180' fill='%231e293b'/><text x='50%25' y='46%25' fill='%2338bdf8' font-family='sans-serif' font-size='13' font-weight='bold' text-anchor='middle'>${label}</text><text x='50%25' y='64%25' fill='%23cbd5e1' font-family='sans-serif' font-size='11' text-anchor='middle'>Click to Open Live Feed ↗</text></svg>`;
+                }
+              });
+              a.appendChild(img);
+              item.appendChild(t);
+              item.appendChild(a);
+              grid.appendChild(item);
+            });
+            section.appendChild(grid);
+            container.appendChild(section);
+          };
+
+          if (snowStakes.length > 0) createSection("❄️ Snow Stakes", snowStakes, true);
+          for (const r in resorts) {
+            if (resorts[r].length > 0) createSection(r, resorts[r], false);
+          }
+          if (container.innerHTML === "") {
+            container.innerHTML = `<div style="padding:14px; color:#64748b;">No webcams returned for this filter. <a href="https://www.skiutah.com/resorts/webcams" target="_blank" style="color:#0284c7;text-decoration:underline;">Open Ski Utah Webcams ↗</a></div>`;
+          }
+          return;
+        }
+
+        // Initial state while fetchLiveWebcams() is in-flight
+        list.forEach(r => {
+          const item = document.createElement("div");
+          item.style.padding = "8px 0";
+          item.innerHTML = `<a href="${getResortUrl(r.name)}" target="_blank" rel="noopener" style="color:#0284c7;font-weight:600;">${r.name} Live Webcams ↗</a>`;
+          container.appendChild(item);
+        });
+      }
+
+      function renderRoads() {
+        const tbody = document.getElementById("road-table-body");
+        tbody.innerHTML = "";
+        state.roads.routes.forEach(r => {
+          tbody.innerHTML += `
+            <tr>
+              <td><span class="r-name">${r.name}</span><span class="r-sub">${r.sub}</span></td>
+              <td><span class="c-weather">${r.weather}</span><span class="c-surface">${r.surface}</span></td>
+              <td style="text-align:right;"><span class="status-badge ${r.badge}">${r.status}</span></td>
+            </tr>`;
+        });
+
+        const sg = document.getElementById("sign-grid");
+        sg.innerHTML = "";
+        state.roads.signs.forEach(s => {
+          sg.innerHTML += `
+            <div>
+              <div class="sign-box"><span class="sign-text">${s.text}</span></div>
+              <span class="sign-label">${s.name}</span>
+            </div>`;
+        });
+
+        const upd = document.getElementById("updates-content");
+        if (state.roads.updates.length > 0) {
+          upd.innerHTML = state.roads.updates.join("<hr style='border:0;border-top:1px solid #bfdbfe;margin:10px 0;'>");
+        }
+      }
+
+      function renderParking() {
+        const list = getFilteredAndSortedResorts(true);
+        const container = document.getElementById("parking-container");
+        container.innerHTML = "";
+
+        const groups = [
+          { region: "bcc", title: "Big Cottonwood Canyon" },
+          { region: "lcc", title: "Little Cottonwood Canyon" },
+          { region: "pc", title: "Park City Area" },
+          { region: "ogden", title: "Ogden Valley" }
+        ];
+
+        groups.forEach(g => {
+          const resortsInGroup = list.filter(r => r.region === g.region);
+          if (resortsInGroup.length === 0) return;
+
+          const block = document.createElement("div");
+          block.className = "section-block";
+          let itemsHtml = `<div class="card-title"><span>${g.title}</span></div>`;
+          resortsInGroup.forEach(r => {
+            itemsHtml += `
+              <div class="parking-item">
+                <strong>${r.parkingTitle}: <a href="${r.parkingUrl}" target="_blank" rel="noopener">${r.parkingLinkText}</a></strong>
+                <span class="parking-note">${r.parkingNote}</span>
+              </div>`;
+          });
+          block.innerHTML = itemsHtml;
+          container.appendChild(block);
+        });
+      }
+
+      function renderAllResortSections() {
+        renderFilterPills();
+        renderTelemetry();
+        renderForecast();
+        renderWebcams();
+        renderRoads();
+        renderParking();
+      }
+
+      // =========================================================================
+      // 7. EVENT LISTENERS & INITIALIZATION
+      // =========================================================================
+      function setupEventListeners() {
+        document.querySelectorAll("[data-toggle-card]").forEach(header => {
+          header.addEventListener("click", () => {
+            const cardId = header.getAttribute("data-toggle-card");
+            const card = document.getElementById(cardId);
+            if (card) card.classList.toggle("collapsed");
+          });
+        });
+
+        document.querySelectorAll("#region-filters .pill-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.selectedRegion = btn.getAttribute("data-region");
+            state.selectedResorts = new Set(RESORTS.map(r => r.id));
+            syncRegionButtons();
+            renderAllResortSections();
+          });
+        });
+
+        document.getElementById("sort-select").addEventListener("change", (e) => {
+          state.sortBy = e.target.value;
+          renderAllResortSections();
+        });
+
+        document.querySelectorAll("#telemetry-view-tabs .sub-tab").forEach(tab => {
+          tab.addEventListener("click", () => {
+            document.querySelectorAll("#telemetry-view-tabs .sub-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            state.telemetryView = tab.getAttribute("data-tview");
+            renderTelemetry();
+          });
+        });
+
+        document.querySelectorAll("#forecast-view-tabs .sub-tab").forEach(tab => {
+          tab.addEventListener("click", () => {
+            document.querySelectorAll("#forecast-view-tabs .sub-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            state.forecastView = tab.getAttribute("data-fview");
+            renderForecast();
+          });
+        });
+
+        document.getElementById("btn-expand-all").addEventListener("click", () => {
+          document.querySelectorAll(".card").forEach(c => c.classList.remove("collapsed"));
+        });
+        document.getElementById("btn-collapse-all").addEventListener("click", () => {
+          document.querySelectorAll(".card").forEach(c => c.classList.add("collapsed"));
+        });
+        document.getElementById("btn-refresh").addEventListener("click", () => {
+          refreshAllLiveFeeds();
+        });
+      }
+
+      function refreshAllLiveFeeds() {
+        const statusEl = document.getElementById("sync-status");
+        statusEl.textContent = "Syncing Live Feeds...";
+        Promise.allSettled([
+          fetchLiveSlc(),
+          fetchLiveMainData(),
+          fetchDirectNwsResorts(),
+          fetchLivePlumesImage(),
+          fetchLiveWebcams(),
+          fetchLiveRoads()
+        ]).then(() => {
+          statusEl.textContent = "Live Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        setupEventListeners();
+        renderSLC();
+        renderAvy();
+        renderWeenies();
+        renderXC();
+        renderAllResortSections();
+        refreshAllLiveFeeds();
+      });
+    </script>
+  </body>
+</html>
