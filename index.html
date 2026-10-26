@@ -1742,7 +1742,7 @@
         // 1. If hosted on Netlify (http/https and not file://), try the Netlify function first
         if (window.location.protocol.startsWith("http") && !window.location.hostname.includes("googleusercontent")) {
           try {
-            const netlifyUrl = window.location.origin + "/.netlify/functions/api?q=" + route;
+            const netlifyUrl = window.location.origin + "/.netlify/functions/api?q=" + route + "&t=" + Date.now();
             const resp = await fetch(netlifyUrl);
             if (resp.ok) {
               const ct = resp.headers.get("content-type") || "";
@@ -1755,37 +1755,17 @@
           }
         }
         // 2. Fallback to your live CORS-enabled Apps Script Web App so opening index.html locally works 100%!
-        const gasEndpoint = GAS_MAIN_URL + "?q=" + route;
-        const resp = await fetch(gasEndpoint);
+                if (route === "cams") {
+                  const resp = await fetch(GAS_MAIN_URL + "?q=cams&t=" + Date.now());
         return await resp.json();
       }
-
+        return null;
       async function fetchLiveMainData() {
         try {
           let data = await fetchBackendRoute("main");
           if (!data || data.error) return;
 
-          // If Netlify function returned "Unavailable" for UAC data, fetch live GAS fallback directly
-          if (!data.avy || !data.avy.bottomLine || data.avy.bottomLine === "Unavailable" || data.avy.weather === "Unavailable") {
-            try {
-              const gasResp = await fetch(GAS_MAIN_URL + "?q=main");
-              if (gasResp.ok) {
-                const gasData = await gasResp.json();
-                if (gasData && gasData.avy) {
-                  data.avy = {
-                    date: gasData.avy.date || data.avy?.date || state.avy.date,
-                    danger: (gasData.avy.danger && gasData.avy.danger !== "No Rating") ? gasData.avy.danger : (data.avy?.danger || "None"),
-                    bottomLine: gasData.avy.bottomLine || state.avy.bottomLine,
-                    weather: gasData.avy.weather || state.avy.weather,
-                    roseUrl: gasData.avy.roseUrl || data.avy?.roseUrl || ""
-                  };
-                }
-                if (gasData && gasData.forecast && gasData.forecast.summary && (!data.forecast || data.forecast.summary.endsWith("..."))) {
-                  data.forecast = gasData.forecast;
-                }
-              }
-            } catch (e) {}
-          }
+        }
 
           // Update Avy & Weather Summary (never overwrite with "Unavailable")
           if (data.avy) {
@@ -1819,10 +1799,10 @@
           }
 
           // If returned from GAS_MAIN_URL (classic schema with telemetry.table & plumes)
-          if (data.telemetry && Array.isArray(data.telemetry.table)) {
-            parseClassicTelemetryAndPlumes(data);
-          } else if (data.stations && data.stations.byResort) {
+          if (data.stations && data.stations.byResort) {
             parseNetlifyStationsAndAvg(data);
+          } else if (data.telemetry && Array.isArray(data.telemetry.table)) {
+            parseClassicTelemetryAndPlumes(data);
           }
 
           renderTelemetry();
@@ -1949,7 +1929,8 @@
         }
       }
 
-      function parseNetlifyStationsAndAvg(data) {
+      function parseNetlifyStationsAndAvg(data) {  const nowStr = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
+                                                 
         for (const id of Object.keys(data.stations.byResort)) {
           const st = data.stations.byResort[id];
           const rep = (data.resortReports && data.resortReports[id]) || {};
