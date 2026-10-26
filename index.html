@@ -1760,7 +1760,8 @@
         return await resp.json();
       }
         return null;
-      async function fetchLiveMainData() {
+     }
+ async function fetchLiveMainData() {
         try {
           let data = await fetchBackendRoute("main");
           if (!data || data.error) return;
