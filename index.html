@@ -1929,7 +1929,11 @@
         }
       }
 
-      function parseNetlifyStationsAndAvg(data) {  const nowStr = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
+function parseNetlifyStationsAndAvg(data) {
+    const nowStr = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
+    document.getElementById("telemetry-header-date").textContent = (data.stations && data.stations.updated) ? formatCustom(cleanTime(data.stations.updated), "time") : nowStr;
+    document.getElementById("plumes-header-date").textContent = (data.avgForecast && data.avgForecast.updated) ? formatCustom(cleanTime(data.avgForecast.updated), "time") : nowStr;
+  
                                                  
         for (const id of Object.keys(data.stations.byResort)) {
           const st = data.stations.byResort[id];
@@ -1937,7 +1941,8 @@
           const avg = (data.avgForecast && data.avgForecast.byResort && data.avgForecast.byResort[id]) || {};
           const rd = state.resortData[id];
           if (!rd) continue;
-
+    rd.supTempSummit = false; rd.supTempBase = false; rd.supDepthBase = false; rd.supDepthSummit = false; rd.supSnowBase = false; rd.supSnowSummit = false;
+          
           const sTemp = (st.summit && st.summit.temp != null) ? Math.round(Number(st.summit.temp)) : null;
           const bTemp = (st.base && st.base.temp != null) ? Math.round(Number(st.base.temp)) : null;
           if (sTemp !== null && !isNaN(sTemp)) rd.tempSummit = sTemp;
