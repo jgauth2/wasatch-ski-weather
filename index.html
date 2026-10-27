@@ -1766,8 +1766,6 @@
           let data = await fetchBackendRoute("main");
           if (!data || data.error) return;
 
-        }
-
           // Update Avy & Weather Summary (never overwrite with "Unavailable")
           if (data.avy) {
             if (data.avy.date && data.avy.date !== "Unavailable") state.avy.date = data.avy.date;
