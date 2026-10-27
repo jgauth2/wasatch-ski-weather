@@ -143,7 +143,7 @@
       }
 
       .control-row {
-        display: flex;
+        display: none;
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
@@ -1121,6 +1121,7 @@
         </div>
       </div>
       <div class="header-actions">
+        <button type="button" class="action-btn" id="btn-toggle-filters" onclick="const b=document.getElementById('control-bar'); const show=b.style.display==='none'; b.style.display=show?'flex':'none'; this.textContent=show?'Filter & Sort ⌃':'Filter & Sort ⌄';">Filter &amp; Sort ⌄</button>
         <button type="button" class="action-btn" id="btn-expand-all">Expand All</button>
         <button type="button" class="action-btn" id="btn-collapse-all">Collapse All</button>
         <button type="button" class="action-btn" id="btn-refresh">↻ Refresh Live Data</button>
@@ -1128,8 +1129,8 @@
     </header>
 
     <!-- FILTER & SORT BAR -->
-    <section class="control-bar" aria-label="Resort Filter and Sort Controls">
-      <div class="control-row">
+      <section id="control-bar" style="display: none;" class="control-bar" aria-label="Resort Filter and Sort Controls">
+        <div class="control-row">
         <div class="filter-group" id="region-filters">
           <span class="control-label">Region:</span>
           <button type="button" class="pill-btn active" data-region="all">All Wasatch (9)</button>
