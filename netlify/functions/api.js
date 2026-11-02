@@ -8,7 +8,7 @@
  * - SNOWOBS_TOKEN: Your SnowObs token (defaults to UAC public token if omitted)
  */
 
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes in-memory warm cache
+const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes in-memory warm cache
 const memoryCache = {};
 
 const RESORT_CONFIG = [
@@ -109,7 +109,7 @@ exports.handler = async function (event) {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
     "Content-Type": "application/json",
-    "Cache-Control": "public, max-age=300, s-maxage=600"
+    "Cache-Control": "public, max-age=300, memoryCache[query]"
   };
 
   if (event.httpMethod === "OPTIONS") {
@@ -119,7 +119,7 @@ exports.handler = async function (event) {
   const query = (event.queryStringParameters && event.queryStringParameters.q) || "main";
   const now = Date.now();
 
-  if (memoryCache[query] && now - memoryCache[query].ts < CACHE_TTL_MS) {
+  if (!(event.queryStringParameters && event.queryStringParameters.force) && memoryCache[query] && now - memoryCache[query].ts < CACHE_TTL_MS) {
     return {
       statusCode: 200,
       headers,
@@ -345,7 +345,21 @@ async function fetchUacAvalanche() {
   const data = await resp.json();
   if (!data.advisories || data.advisories.length === 0) throw new Error("No UAC advisory");
 
-  const forecast = data.advisories[0].advisory;
+  const forecast = data.advisories[0].advisory; const htmlResp = await fetch(resp.url.replace("/json", ""), { headers: BROWSER_HEADERS }).catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : ""; const uacTxt = uacHtml.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<br\s*\/?>/gi, "
+").replace(/<\/(p|div|h[1-6]|li)>/gi, "
+
+").replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/gi, " ").replace(/&#0?39;|&rsquo;/gi, "'").replace(/&ndash;/gi, "–").replace(/&deg;|&#176;/gi, "°").replace(/[ 	]+/g, " ").replace(/
+[ 	]+/g, "
+").replace(/
+{3,}/g, "
+
+").trim(); const issM = uacTxt.match(/Issued by[\s\S]{1,140}?\bon\s*
+*\s*([A-Za-z]+(?:\s+(?:morning|afternoon|evening|night))?,?\s+[A-Za-z]+\s+\d{1,2},?\s+\d{4})/i); const htmlDate = issM ? issM[1].replace(/\b(morning|afternoon|evening|night),?\s*/gi, "").trim() : ""; const htmlBl = issM ? uacTxt.substring(issM.index + issM[0].length).split(/
+\s*(?:Low\s*
++\s*Moderate|Learn how to read|Special Announcements|Weather and Snow|Current Conditions|Recent Avalanches)/i)[0].trim() : ""; const wxM = uacTxt.match(/
+\s*(?:Weather and Snow|Current Conditions|Mountain Weather)\s*
+/i); const htmlWx = wxM ? uacTxt.substring(wxM.index + wxM[0].length).split(/
+\s*(?:Recent Avalanches|Avalanche Problem|Additional Information|General Announcements|Sponsor|< Previous)/i)[0].trim() : ""; if (htmlBl && (!forecast.bottom_line || /great season/i.test(forecast.bottom_line))) { forecast.bottom_line = htmlBl; if (htmlDate) forecast.date_issued = htmlDate; if (htmlWx) forecast.current_conditions = htmlWx; }
   const cleanText = (html) => {
     if (!html) return "";
     return html
@@ -397,7 +411,21 @@ async function fetchWeatherWeenies() {
   const rawHtml = (entry.content && entry.content.$t) || (entry.summary && entry.summary.$t) || "";
   const cleanContent = rawHtml.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 
-  let summary = cleanContent.substring(0, 360) + "...";
+  const sents = (cleanContent.replace(/(?:Source:|Downloaded|Photo from)[^.!?]*[.!?]/gi, " ").match(/[^.!?]+[.!?]+/g) || [cleanContent]).map(s => s.trim()).filter(s => s.length > 25); let summary = sents.length <= 4 ? sents.join(" ") : [sents[0], sents[1], sents[sents.length - 2] || "", sents[sents.length - 1]].filter(Boolean).join(" ");catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : ""; const uacTxt = uacHtml.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<br\s*\/?>/gi, "
+").replace(/<\/(p|div|h[1-6]|li)>/gi, "
+
+").replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/gi, " ").replace(/&#0?39;|&rsquo;/gi, "'").replace(/&ndash;/gi, "–").replace(/&deg;|&#176;/gi, "°").replace(/[ 	]+/g, " ").replace(/
+[ 	]+/g, "
+").replace(/
+{3,}/g, "
+
+").trim(); const issM = uacTxt.match(/Issued by[\s\S]{1,140}?\bon\s*
+*\s*([A-Za-z]+(?:\s+(?:morning|afternoon|evening|night))?,?\s+[A-Za-z]+\s+\d{1,2},?\s+\d{4})/i); const htmlDate = issM ? issM[1].replace(/\b(morning|afternoon|evening|night),?\s*/gi, "").trim() : ""; const htmlBl = issM ? uacTxt.substring(issM.index + issM[0].length).split(/
+\s*(?:Low\s*
++\s*Moderate|Learn how to read|Special Announcements|Weather and Snow|Current Conditions|Recent Avalanches)/i)[0].trim() : ""; const wxM = uacTxt.match(/
+\s*(?:Weather and Snow|Current Conditions|Mountain Weather)\s*
+/i); const htmlWx = wxM ? uacTxt.substring(wxM.index + wxM[0].length).split(/
+\s*(?:Recent Avalanches|Avalanche Problem|Additional Information|General Announcements|Sponsor|< Previous)/i)[0].trim() : ""; if (htmlBl && (!forecast.bottom_line || /great season/i.test(forecast.bottom_line))) { forecast.bottom_line = htmlBl; if (htmlDate) forecast.date_issued = htmlDate; if (htmlWx) forecast.current_conditions = htmlWx; }
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey) {
     try {
