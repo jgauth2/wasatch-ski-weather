@@ -345,21 +345,7 @@ async function fetchUacAvalanche() {
   const data = await resp.json();
   if (!data.advisories || data.advisories.length === 0) throw new Error("No UAC advisory");
 
-  const forecast = data.advisories[0].advisory; const htmlResp = await fetch(resp.url.replace("/json", ""), { headers: BROWSER_HEADERS }).catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : ""; const uacTxt = uacHtml.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<br\s*\/?>/gi, "
-").replace(/<\/(p|div|h[1-6]|li)>/gi, "
-
-").replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/gi, " ").replace(/&#0?39;|&rsquo;/gi, "'").replace(/&ndash;/gi, "–").replace(/&deg;|&#176;/gi, "°").replace(/[ 	]+/g, " ").replace(/
-[ 	]+/g, "
-").replace(/
-{3,}/g, "
-
-").trim(); const issM = uacTxt.match(/Issued by[\s\S]{1,140}?\bon\s*
-*\s*([A-Za-z]+(?:\s+(?:morning|afternoon|evening|night))?,?\s+[A-Za-z]+\s+\d{1,2},?\s+\d{4})/i); const htmlDate = issM ? issM[1].replace(/\b(morning|afternoon|evening|night),?\s*/gi, "").trim() : ""; const htmlBl = issM ? uacTxt.substring(issM.index + issM[0].length).split(/
-\s*(?:Low\s*
-+\s*Moderate|Learn how to read|Special Announcements|Weather and Snow|Current Conditions|Recent Avalanches)/i)[0].trim() : ""; const wxM = uacTxt.match(/
-\s*(?:Weather and Snow|Current Conditions|Mountain Weather)\s*
-/i); const htmlWx = wxM ? uacTxt.substring(wxM.index + wxM[0].length).split(/
-\s*(?:Recent Avalanches|Avalanche Problem|Additional Information|General Announcements|Sponsor|< Previous)/i)[0].trim() : ""; if (htmlBl && (!forecast.bottom_line || /great season/i.test(forecast.bottom_line))) { forecast.bottom_line = htmlBl; if (htmlDate) forecast.date_issued = htmlDate; if (htmlWx) forecast.current_conditions = htmlWx; }
+  const forecast = data.advisories[0].advisory; const htmlResp = await fetch(resp.url.replace("/json", ""), { headers: BROWSER_HEADERS }).catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : "";
   const cleanText = (html) => {
     if (!html) return "";
     return html
@@ -375,7 +361,7 @@ async function fetchUacAvalanche() {
       .trim();
   };
 
-  let dangerLevel = forecast.overall_danger_rating;
+  const uacTxt = cleanText(uacHtml.split("&#039;").join("'").split("&ndash;").join("–").split("&deg;").join("°")); const iOn = uacTxt.indexOf("Issued by"); const i202 = iOn !== -1 ? uacTxt.indexOf("202", iOn) : -1; const htmlDate = i202 !== -1 ? uacTxt.substring(uacTxt.indexOf(" on", iOn) + 3, i202 + 4).split(String.fromCharCode(10)).join(" ").replace("morning,", "").replace("afternoon,", "").replace("evening,", "").trim() : ""; const afterDate = i202 !== -1 ? uacTxt.substring(i202 + 4).trim() : ""; const stopIdx = afterDate.indexOf("Low") !== -1 ? afterDate.indexOf("Low") : afterDate.indexOf("Weather and Snow"); const htmlBl = stopIdx !== -1 ? afterDate.substring(0, stopIdx).trim() : ""; const wxIdx = uacTxt.indexOf("Weather and Snow"); const afterWx = wxIdx !== -1 ? uacTxt.substring(wxIdx + 16).trim() : ""; const wxEnd = afterWx.indexOf("Recent Avalanches") !== -1 ? afterWx.indexOf("Recent Avalanches") : afterWx.indexOf("Additional Information"); const htmlWx = wxEnd !== -1 ? afterWx.substring(0, wxEnd).trim() : ""; if (htmlDate) forecast.date_issued = htmlDate; const rawBl = cleanText(forecast.bottom_line); const bottomLine = (rawBl && !rawBl.includes("great season") ? rawBl : htmlBl) || ""; const weather = cleanText(forecast.current_conditions || forecast.mountain_weather) || htmlWx || ""; let dangerLevel = forecast.overall_danger_rating;
   if (typeof dangerLevel === "number") {
     const dangerMap = ["No Rating", "Low", "Moderate", "Considerable", "High", "Extreme"];
     dangerLevel = dangerMap[dangerLevel] || "No Rating";
@@ -391,8 +377,8 @@ async function fetchUacAvalanche() {
   return {
     date: forecast.date_issued || "",
     danger: dangerLevel || "No Rating",
-    bottomLine: cleanText(forecast.bottom_line),
-    weather: cleanText(forecast.current_conditions || forecast.mountain_weather),
+    bottomLine: bottomLine,
+    weather: weather,
     roseUrl
   };
 }
