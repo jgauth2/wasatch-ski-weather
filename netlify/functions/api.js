@@ -343,8 +343,8 @@ async function fetchNwsAvgForecast() {
 async function fetchUacAvalanche() {
   const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake/json");
   const data = await resp.json();
-  if (!data.advisories || data.advisories.length === 0) throw new Error("No UAC advisory");
-
+  if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
+  
   const forecast = data.advisories[0].advisory; const htmlResp = await fetch(resp.url.replace("/json", ""), {  }).catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : "";
   const cleanText = (html) => {
     if (!html) return "";
