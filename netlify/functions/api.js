@@ -377,7 +377,7 @@ async function fetchUacAvalanche() {
   return {
     date: forecast.date_issued || "",
     danger: dangerLevel || "No Rating",
-    bottomLine:bottomLine || ("STATUS:" + (resp ? resp.status : 0) + " LEN:" + uacHtml.length), bottomLine,
+    bottomLine:bottomLine || ("STATUS:" + (resp ? resp.status : 0) + " LEN:" + uacHtml.length),
     weather: weather,
     roseUrl
   };
