@@ -341,11 +341,11 @@ async function fetchNwsAvgForecast() {
 }
 
 async function fetchUacAvalanche() {
-  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake/json");
-  const data = await resp.json();
+  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake", { headers: { "User-Agent": "Mozilla/5.0" } });
+  const uacHtml = resp && resp.ok ? await resp.text() : ""; const data = {};
   if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
   
-  const forecast = data.advisories[0].advisory; const htmlResp = await fetch(resp.url.replace("/json", ""), {  }).catch(() => null); const uacHtml = htmlResp && htmlResp.ok ? await htmlResp.text() : "";
+  const forecast = {};
   const cleanText = (html) => {
     if (!html) return "";
     return html
