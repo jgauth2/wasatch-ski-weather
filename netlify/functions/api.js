@@ -341,7 +341,7 @@ async function fetchNwsAvgForecast() {
 }
 
 async function fetchUacAvalanche() {
-  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake", { headers: { "User-Agent": "Mozilla/5.0" } });
+  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake", { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36", "Accept": "text/html,application/xhtml+xml", "Accept-Language": "en-US,en;q=0.9" } });
   const uacHtml = resp && resp.ok ? await resp.text() : ""; const data = {};
   if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
   
