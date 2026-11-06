@@ -108,7 +108,7 @@ exports.handler = async function (event) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json");,,
+    "Content-Type": "application/json",
     "Cache-Control": "public, max-age=300, memoryCache[query]"
   };
 
@@ -148,7 +148,7 @@ exports.handler = async function (event) {
         stations: stations.status === "fulfilled" ? stations.value : { list: [], byResort: {} },
         resortReports: resortReports.status === "fulfilled" ? resortReports.value : {},
         avgForecast: avgForecast.status === "fulfilled" ? avgForecast.value : {},
-        avy: avy.status === "fulfilled" ? avy.value : { danger: "No Rating", bottomLine: "Unavailable", weather: "Unavailable", date: "" },
+        avy: avy.status === "fulfilled" ? avy.value : { danger: "No Rating", bottomLine: "UAC Error", weather: "UAC Error", date: "Error" },
         forecast: weenies.status === "fulfilled" ? weenies.value : { title: "Wasatch Weather Weenies", summary: "Unavailable", link: "https://wasatchweatherweenies.blogspot.com/" },
         xc: xc.status === "fulfilled" ? xc.value : []
       };
