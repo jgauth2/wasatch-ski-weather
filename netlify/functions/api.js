@@ -108,7 +108,7 @@ exports.handler = async function (event) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json",
+    "Content-Type": "application/json");
     "Cache-Control": "public, max-age=300, memoryCache[query]"
   };
 
@@ -341,7 +341,7 @@ async function fetchNwsAvgForecast() {
 }
 
 async function fetchUacAvalanche() {
-  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake/json", { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36", "Accept": "text/html,application/xhtml+xml", "Accept-Language": "en-US,en;q=0.9" } });
+  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake/json");
   const data = resp && resp.ok ? await resp.json() : {}; const uacHtml = "";
   if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
 
@@ -376,8 +376,8 @@ async function fetchUacAvalanche() {
   return {
     date: forecast.date_issued || "Error",
     danger: dangerLevel || "No Rating",
-    bottomLine: bottomLine || weather || "UAC Error",
-    weather: weather || "UAC Error",
+    bottomLine: bottomLine || weather || "UAC Error HTTP " + resp.status,
+    weather: weather || "UAC Error HTTP " + resp.status,
     roseUrl
   };
 }
