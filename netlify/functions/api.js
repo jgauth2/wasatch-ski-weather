@@ -374,10 +374,10 @@ async function fetchUacAvalanche() {
   }
 
   return {
-    date: forecast.date_issued || "",
+    date: forecast.date_issued || "Error",
     danger: dangerLevel || "No Rating",
     bottomLine: bottomLine || weather || "UAC Error",
-    weather: weather,
+    weather: weather || "UAC Error",
     roseUrl
   };
 }
