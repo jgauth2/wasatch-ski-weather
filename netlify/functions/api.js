@@ -345,7 +345,7 @@ async function fetchUacAvalanche() {
   const data = resp && resp.ok ? await resp.json() : {}; const uacHtml = "";
   if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
 
-  const forecast = (data.advisories && data.advisories[0] && data.advisories[0].advisory) || {}
+  const forecast = (data.advisories && data.advisories[0] && data.advisories[0].advisory) || {}; const cleanText  = (html) => {
     if (!html) return "";
     return html
       .replace(/<br\s*\/?>/gi, "\n")
@@ -376,7 +376,7 @@ async function fetchUacAvalanche() {
   return {
     date: forecast.date_issued || "",
     danger: dangerLevel || "No Rating",
-    bottomLine:bottomLine || ("STATUS:" + (resp ? resp.status : 0) + " LEN:" + uacHtml.length),
+    bottomLine:bottomLine || (weather || ("Error loading UAC forecast (HTTP " + (resp ? resp.status : 0) + ")"),"
     weather: weather,
     roseUrl
   };
