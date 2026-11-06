@@ -108,7 +108,7 @@ exports.handler = async function (event) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json");
+    "Content-Type": "application/json");,,
     "Cache-Control": "public, max-age=300, memoryCache[query]"
   };
 
