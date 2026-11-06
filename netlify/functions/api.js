@@ -524,7 +524,7 @@ async function fetchWebcams() {
     if (rc.id !== "spruces") resorts[rc.name] = [];
   }
 
-  const imgRegex = /<img[^>]+src=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["'][^>]*alt=["']([^"']+)["']/gi;
+  const imgRegex = /<img[^>]+src=["'](https?:\/\/[^"']+(?:\/webcam\/|\.(?:jpg|jpeg|png|webp))[^"']*)["'][^>]*alt=["']([^"']+)["']/gi;
   let match;
   while ((match = imgRegex.exec(html)) !== null) {
     const url = match[1];
@@ -565,7 +565,7 @@ async function fetchWebcams() {
       },
       {
         title: "Road | SR-158 @ Powder Mtn (MP 11.6)",
-        url: "https://www.udottraffic.utah.gov/map/Cctv/168156",
+        url: "https://www.udottraffic.utah.gov/1_devices/sr-158-mp11.gif",
         fallbackUrl: "https://www.udottraffic.utah.gov/map/Cctv/165869",
         link: "https://udottraffic.utah.gov/"
       },
