@@ -376,7 +376,7 @@ async function fetchUacAvalanche() {
   return {
     date: forecast.date_issued || "",
     danger: dangerLevel || "No Rating",
-    bottomLine:bottomLine || (weather || ("Error loading UAC forecast (HTTP " + (resp ? resp.status : 0) + ")"),"
+    bottomLine: bottomLine || weather || "UAC Error",
     weather: weather,
     roseUrl
   };
