@@ -154,7 +154,7 @@ exports.handler = async function (event) {
       };
     }
 
-    memoryCache[query] = { ts: now, data: result };
+    if (!result.avy || result.avy.date !== "Error") memoryCache[query] = { ts: now, data: result };
     return { statusCode: 200, headers, body: JSON.stringify(result) };
   } catch (err) {
     return {
@@ -341,7 +341,7 @@ async function fetchNwsAvgForecast() {
 }
 
 async function fetchUacAvalanche() {
-  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake",{headers:{"User-Agent":"UAC-App"}});
+  const resp = await fetch("https://utahavalanchecenter.org/forecast/salt-lake",{headers:{"User-Agent":"WasatchSkiWeather/" + Date.now()}});
   const uacHtml = resp && resp.ok ? await resp.text() : ""; const data = {};
   if (!data.advisories || data.advisories.length === 0) data.advisories = [{ advisory: {} }];
 
